@@ -3,6 +3,7 @@ import { Geist_Mono, Space_Grotesk } from "next/font/google";
 import { cn } from "~/lib/utils";
 import "~/app/globals.css";
 import { Toaster } from "~/shadcn/ui/toast";
+import { ThemeProvider } from "~/components/dark-mode/theme-provider";
 
 const spaceGrotesk = Space_Grotesk({
 	subsets: ["latin"],
@@ -28,10 +29,18 @@ export default function RootLayout({
 		<html
 			lang="en"
 			className={cn(geistMono.variable, spaceGrotesk.variable)}
+			suppressHydrationWarning
 		>
 			<body>
-				{children}
-				<Toaster />
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					{children}
+					<Toaster />
+				</ThemeProvider>
 			</body>
 		</html>
 	);
