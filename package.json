@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
+    "@tanstack/react-hotkeys": "^0.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.27.0",
@@ -24,6 +25,8 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
+    "@tanstack/react-devtools": "^0.10.9",
+    "@tanstack/react-hotkeys-devtools": "^0.7.0",
     "@types/node": "^26.1.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
