@@ -18,7 +18,7 @@ import {
 	newExaminationFormOptions,
 	newExaminationSchema
 } from "~/options/forms/new-examination-options";
-import { createNewExamination } from "~/server/actions/new-examination";
+import { createNewExamination } from "~/server/actions/create-new-examination";
 import { Button } from "~/shadcn/ui/button";
 import {
 	Dialog,
