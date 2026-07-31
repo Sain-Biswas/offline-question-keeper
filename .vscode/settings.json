@@ -1,4 +1,13 @@
 {
 	"js/ts.tsdk.path": "node_modules/typescript/lib",
-	"cSpell.words": ["frontmost", "grotesk", "logomark", "mjsx", "mtsx"]
+	"cSpell.words": [
+		"cdse",
+		"dropmenu",
+		"frontmost",
+		"grotesk",
+		"logomark",
+		"mjsx",
+		"mtsx",
+		"upsc"
+	]
 }
