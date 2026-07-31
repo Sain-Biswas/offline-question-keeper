@@ -12,9 +12,12 @@ import {
 	LandmarkIcon,
 	RotateCcwIcon
 } from "lucide-react";
-import { useActionState } from "react";
+import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { slugify } from "transliteration";
-import { newExaminationFormOptions } from "~/options/forms/new-examination-options";
+import {
+	newExaminationFormOptions,
+	newExaminationSchema
+} from "~/options/forms/new-examination-options";
 import { createNewExamination } from "~/server/actions/new-examination";
 import { Button } from "~/shadcn/ui/button";
 import {
@@ -42,8 +45,11 @@ import {
 	InputGroupTextarea
 } from "~/shadcn/ui/input-group";
 import { Spinner } from "~/shadcn/ui/spinner";
+import { toast } from "~/shadcn/ui/toast";
 
 export function NewExaminationDialog() {
+	const [open, setOpen] = useState<boolean>(false);
+
 	const [state, action] = useActionState(
 		createNewExamination,
 		initialFormState
@@ -51,14 +57,49 @@ export function NewExaminationDialog() {
 
 	const form = useForm({
 		...newExaminationFormOptions,
+		validators: {
+			onBlur: newExaminationSchema
+		},
 		transform: useTransform(
 			(baseForm) => mergeForm(baseForm, state!),
 			[state]
 		)
 	});
 
+	const handleSuccess = useEffectEvent(() => {
+		toast.add({
+			title: "Examination created successfully!",
+			description: "You can now start preparation for this examination.",
+			type: "success"
+		});
+		form.reset();
+		setOpen(false);
+	});
+
+	const handleFailure = useEffectEvent(() => {
+		toast.add({
+			type: "error",
+			title: "Something went wrong",
+			description: "Please check log for finding the reason"
+		});
+	});
+
+	useEffect(() => {
+		if (Array.isArray(state)) {
+			if (state.length > 0) {
+				// eslint-disable-next-line react-hooks/set-state-in-effect
+				handleSuccess();
+			} else {
+				handleFailure();
+			}
+		}
+	}, [state]);
+
 	return (
-		<Dialog>
+		<Dialog
+			open={open}
+			onOpenChange={setOpen}
+		>
 			<DialogTrigger
 				render={
 					<Button size="sm">
@@ -108,7 +149,7 @@ export function NewExaminationDialog() {
 													)
 												}
 												aria-invalid={isInvalid}
-												placeholder="Combined Defense Services Examination"
+												placeholder="Joint Entrance Examination"
 												autoComplete="off"
 											/>
 											<InputGroupAddon align="inline-start">
@@ -166,7 +207,7 @@ export function NewExaminationDialog() {
 														)
 													}
 													aria-invalid={isInvalid}
-													placeholder="UPSC CDSE"
+													placeholder="JEE"
 													autoComplete="off"
 												/>
 												<InputGroupAddon align="inline-start">
@@ -215,7 +256,7 @@ export function NewExaminationDialog() {
 														)
 													}
 													aria-invalid={isInvalid}
-													placeholder="upsc-cdse"
+													placeholder="jee"
 													autoComplete="off"
 												/>
 												<InputGroupAddon align="inline-start">
@@ -264,21 +305,17 @@ export function NewExaminationDialog() {
 													)
 												}
 												aria-invalid={isInvalid}
-												placeholder="Common Examination for selection into Army Navy and Air force as an commissioned officer."
+												placeholder="Optional summary or reference tags to help filter this exam."
 												autoComplete="off"
 											/>
 											<InputGroupAddon align="block-end">
 												<InputGroupText>
-													{field.state.value.length}
+													{field.state.value.length
+														?? 0}
 													/250 Character(s)
 												</InputGroupText>
 											</InputGroupAddon>
 										</InputGroup>
-
-										<FieldDescription>
-											Optional summary or reference tags
-											to help filter this exam.
-										</FieldDescription>
 
 										{isInvalid && (
 											<FieldError
@@ -301,7 +338,11 @@ export function NewExaminationDialog() {
 									<>
 										<Button
 											variant="destructive"
-											onClick={() => form.reset()}
+											onClick={(event) => {
+												event.preventDefault();
+												event.stopPropagation();
+												form.reset();
+											}}
 											disabled={isSubmitting}
 										>
 											<RotateCcwIcon />
@@ -309,7 +350,14 @@ export function NewExaminationDialog() {
 										</Button>
 										<DialogClose
 											render={
-												<Button variant="outline">
+												<Button
+													variant="outline"
+													onClick={(event) => {
+														event.preventDefault();
+														event.stopPropagation();
+														form.reset();
+													}}
+												>
 													<CircleXIcon />
 													Cancel
 												</Button>

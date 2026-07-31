@@ -1,1 +1,1 @@
-export * from "~/server/database/schemas/examinations"
+export * from "~/server/database/schemas/examinations";
