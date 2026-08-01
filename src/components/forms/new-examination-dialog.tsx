@@ -102,7 +102,7 @@ export function NewExaminationDialog() {
 		>
 			<DialogTrigger
 				render={
-					<Button size="sm">
+					<Button size="lg">
 						<CirclePlusIcon />
 						Add New Examination
 					</Button>

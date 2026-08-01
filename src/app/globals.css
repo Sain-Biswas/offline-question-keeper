@@ -158,16 +158,16 @@
 
 @layer base {
 	* {
-		@apply border-border outline-ring/50;
+		@apply box-border border-border outline-ring/50;
 	}
 	body {
-		@apply min-h-screen bg-background text-foreground;
+		@apply bg-background text-foreground;
 	}
 	button:not(:disabled),
 	[role="button"]:not(:disabled) {
 		cursor: pointer;
 	}
 	html {
-		@apply h-full font-sans antialiased;
+		@apply min-h-screen font-sans antialiased;
 	}
 }
