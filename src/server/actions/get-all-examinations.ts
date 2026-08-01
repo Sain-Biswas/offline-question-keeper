@@ -7,4 +7,6 @@ export async function getAllExamination() {
 	return await database.select().from(examinationTable);
 }
 
-export type GetAllExaminationItemType = Awaited<ReturnType<typeof getAllExamination>>[number];
+export type GetAllExaminationItemType = Awaited<
+	ReturnType<typeof getAllExamination>
+>[number];
