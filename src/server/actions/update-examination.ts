@@ -23,12 +23,12 @@ export async function updateExaminationDetails(
 	formData: FormData
 ) {
 	try {
-		const { description, name, examinationId, isActive } =
+		const { description, name, examinationId, isActive, image } =
 			await serverValidate(formData);
 
 		const data = await database
 			.update(examinationTable)
-			.set({ description, name, isActive: isActive === "on" })
+			.set({ description, name, isActive: isActive === "on", image })
 			.where(eq(examinationTable.id, examinationId))
 			.returning();
 

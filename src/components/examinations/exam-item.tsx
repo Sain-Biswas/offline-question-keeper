@@ -7,9 +7,12 @@ import {
 	ItemDescription,
 	ItemFooter,
 	ItemHeader,
+	ItemMedia,
 	ItemTitle
 } from "~/shadcn/ui/item";
 import { ExamItemOptions } from "~/components/examinations/exam-item-options";
+import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";
+import { Skeleton } from "~/shadcn/ui/skeleton";
 
 export function ExaminationItem({
 	examination
@@ -25,6 +28,22 @@ export function ExaminationItem({
 			<ItemHeader className="text-base/loose font-medium">
 				{examination.name}
 			</ItemHeader>
+			<ItemMedia
+				variant="image"
+				className="size-14"
+			>
+				<Avatar className="size-14 rounded-none after:content-none">
+					<AvatarImage
+						src={examination.image ?? null}
+						alt={examination.code}
+						className="size-14 rounded-none object-contain!"
+					/>
+					<AvatarFallback
+						className="size-14 rounded-none"
+						render={<Skeleton />}
+					/>
+				</Avatar>
+			</ItemMedia>
 			<ItemContent>
 				<ItemTitle className="text-lg/relaxed">
 					{examination.code}

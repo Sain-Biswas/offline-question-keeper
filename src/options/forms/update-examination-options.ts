@@ -12,7 +12,8 @@ export const updateExaminationSchema = z.object({
 		message: "Description can be at most 250 characters long."
 	}),
 	examinationId: z.uuidv7({ error: "Please provide a valid ID." }),
-	isActive: z.literal("on").optional()
+	isActive: z.literal("on").optional(),
+	image: z.string()
 });
 
 export const updateExaminationFormOptions = formOptions({
@@ -20,6 +21,7 @@ export const updateExaminationFormOptions = formOptions({
 		name: "",
 		description: "",
 		examinationId: "",
-		isActive: "on"
+		isActive: "on",
+		image: ""
 	} as z.infer<typeof updateExaminationSchema>
 });

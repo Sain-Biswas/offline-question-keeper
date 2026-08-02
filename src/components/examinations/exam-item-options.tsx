@@ -10,12 +10,15 @@ import {
 	CircleXIcon,
 	EllipsisIcon,
 	ExternalLinkIcon,
+	ImageIcon,
 	LandmarkIcon,
 	PencilSparklesIcon,
-	RotateCcwIcon
+	RotateCcwIcon,
+	Trash2Icon
 } from "lucide-react";
 import Form from "next/form";
 import Link from "next/link";
+import type { ChangeEvent } from "react";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { z } from "zod";
 import {
@@ -24,6 +27,7 @@ import {
 } from "~/options/forms/update-examination-options";
 import type { GetAllExaminationItemType } from "~/server/actions/get-all-examinations";
 import { updateExaminationDetails } from "~/server/actions/update-examination";
+import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";
 import { Button } from "~/shadcn/ui/button";
 import {
 	Dialog,
@@ -81,7 +85,8 @@ export function ExamItemOptions({
 			examinationId: examination.id,
 			name: examination.name,
 			description: examination.description,
-			isActive: examination.isActive ? "on" : undefined
+			isActive: examination.isActive ? "on" : undefined,
+			image: examination.image ?? "" // Standard Data URL or URL string
 		} as z.infer<typeof updateExaminationSchema>,
 
 		validators: {
@@ -122,6 +127,22 @@ export function ExamItemOptions({
 			}
 		}
 	}, [state]);
+
+	// File to Base64 Data URL converter
+	const handleImageChange = (
+		e: ChangeEvent<HTMLInputElement>,
+		onChange: (value: string) => void
+	) => {
+		const file = e.target.files?.[0];
+		if (!file) return;
+
+		const reader = new FileReader();
+		reader.onloadend = () => {
+			const base64String = reader.result as string;
+			onChange(base64String); // Set field state to data:image/...;base64,
+		};
+		reader.readAsDataURL(file);
+	};
 
 	return (
 		<>
@@ -176,6 +197,16 @@ export function ExamItemOptions({
 							onSubmit={() => form.handleSubmit()}
 						>
 							<FieldGroup>
+								<form.Field name="image">
+									{(field) => (
+										<input
+											type="hidden"
+											name={field.name}
+											value={field.state.value ?? ""}
+										/>
+									)}
+								</form.Field>
+
 								<form.Field name="examinationId">
 									{(field) => {
 										const hasErrors =
@@ -215,6 +246,85 @@ export function ExamItemOptions({
 													/>
 												)}
 											</Field>
+										);
+									}}
+								</form.Field>
+
+								<form.Field name="image">
+									{(field) => {
+										const hasErrors =
+											field.state.meta.errors.length > 0;
+										const isInvalid =
+											(field.state.meta.isTouched
+												|| form.state.isSubmitted)
+											&& hasErrors;
+
+										return (
+											<div className="flex gap-6">
+												<Avatar className="size-14 rounded-none after:content-none">
+													<AvatarImage
+														src={
+															field.state.value
+															?? examination.image
+															?? null
+														}
+														className="rounded-none object-contain!"
+													/>
+													<AvatarFallback className="size-14 rounded-none">
+														<ImageIcon />
+													</AvatarFallback>
+												</Avatar>
+												<Field
+													data-invalid={isInvalid}
+													className="gap-0"
+												>
+													<FieldLabel>
+														Examination Image
+													</FieldLabel>
+
+													<InputGroup>
+														<InputGroupInput
+															type="file"
+															accept="image/*"
+															id={field.name}
+															onChange={(e) =>
+																handleImageChange(
+																	e,
+																	field.handleChange
+																)
+															}
+															onBlur={
+																field.handleBlur
+															}
+														/>
+														{field.state.value && (
+															<InputGroupAddon align="inline-end">
+																<Button
+																	type="button"
+																	variant="destructive"
+																	size="icon-sm"
+																	onClick={() =>
+																		field.handleChange(
+																			""
+																		)
+																	}
+																>
+																	<Trash2Icon />
+																</Button>
+															</InputGroupAddon>
+														)}
+													</InputGroup>
+
+													{isInvalid && (
+														<FieldError
+															errors={
+																field.state.meta
+																	.errors
+															}
+														/>
+													)}
+												</Field>
+											</div>
 										);
 									}}
 								</form.Field>
@@ -375,7 +485,7 @@ export function ExamItemOptions({
 													<InputGroupAddon align="block-end">
 														<InputGroupText>
 															{field.state.value
-																.length ?? 0}
+																?.length ?? 0}
 															/250 Character(s)
 														</InputGroupText>
 													</InputGroupAddon>
