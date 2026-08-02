@@ -10,7 +10,9 @@ import {
 	CirclePlusIcon,
 	CircleXIcon,
 	LandmarkIcon,
-	RotateCcwIcon
+	LinkIcon,
+	RotateCcwIcon,
+	SignatureIcon
 } from "lucide-react";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { slugify } from "transliteration";
@@ -153,7 +155,7 @@ export function NewExaminationDialog() {
 												autoComplete="off"
 											/>
 											<InputGroupAddon align="inline-start">
-												<LandmarkIcon />
+												<SignatureIcon />
 											</InputGroupAddon>
 										</InputGroup>
 
@@ -260,7 +262,7 @@ export function NewExaminationDialog() {
 													autoComplete="off"
 												/>
 												<InputGroupAddon align="inline-start">
-													<LandmarkIcon />
+													<LinkIcon />
 												</InputGroupAddon>
 											</InputGroup>
 

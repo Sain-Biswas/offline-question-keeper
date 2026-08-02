@@ -12,8 +12,13 @@ export const examinationTable = sqliteTable("examinations", (table) => ({
 	code: table.text("code").notNull(),
 	slug: table.text("slug").unique().notNull(),
 
-	description: table.text("description"),
-	isActive: table.integer("is_active", { mode: "boolean" }).default(true),
+	image: table.text("image").default("").notNull(),
+
+	description: table.text("description").notNull().default(""),
+	isActive: table
+		.integer("is_active", { mode: "boolean" })
+		.notNull()
+		.default(true),
 
 	createdAt: table
 		.integer("created_at", { mode: "timestamp_ms" })
