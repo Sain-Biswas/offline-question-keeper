@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ChapterList } from "~/components/chapters/list";
 import { PaperList } from "~/components/papers/list";
 import { SubjectList } from "~/components/subjects/list";
-import { getExaminationDetails } from "~/server/actions/get-examination-details";
+import { getExaminationDetails } from "~/server/fetchers/get-examination-details";
 import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";
 import {
 	Breadcrumb,

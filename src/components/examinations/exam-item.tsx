@@ -1,5 +1,5 @@
 import { cn } from "~/lib/utils";
-import type { GetAllExaminationItemType } from "~/server/actions/get-all-examinations";
+import type { GetAllExaminationItemType } from "~/server/fetchers/get-all-examinations";
 import {
 	Item,
 	ItemActions,

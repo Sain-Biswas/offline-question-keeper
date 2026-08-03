@@ -25,7 +25,7 @@ import {
 	updateExaminationFormOptions,
 	updateExaminationSchema
 } from "~/options/forms/update-examination-options";
-import type { GetAllExaminationItemType } from "~/server/actions/get-all-examinations";
+import type { GetAllExaminationItemType } from "~/server/fetchers/get-all-examinations";
 import { updateExaminationDetails } from "~/server/actions/update-examination";
 import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";
 import { Button } from "~/shadcn/ui/button";

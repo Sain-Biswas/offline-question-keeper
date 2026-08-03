@@ -8,7 +8,7 @@ import Form from "next/form";
 import Link from "next/link";
 import { ExaminationItem } from "~/components/examinations/exam-item";
 import { NewExaminationDialog } from "~/components/forms/new-examination-dialog";
-import { getAllExamination } from "~/server/actions/get-all-examinations";
+import { getAllExamination } from "~/server/fetchers/get-all-examinations";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
