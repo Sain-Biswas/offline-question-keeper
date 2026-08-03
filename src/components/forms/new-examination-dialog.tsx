@@ -312,7 +312,7 @@ export function NewExaminationDialog() {
 											/>
 											<InputGroupAddon align="block-end">
 												<InputGroupText>
-													{field.state.value.length
+													{field.state.value?.length
 														?? 0}
 													/250 Character(s)
 												</InputGroupText>

@@ -188,7 +188,9 @@ export function ExamItemOptions({
 						<DialogHeader>
 							<DialogTitle>Edit examination details</DialogTitle>
 							<DialogDescription>
-								Only the following listed fields can be updated
+								Only the following listed fields can be updated.
+								If current values are not visible please cancel
+								and open again.
 							</DialogDescription>
 						</DialogHeader>
 

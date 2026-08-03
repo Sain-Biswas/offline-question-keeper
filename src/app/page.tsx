@@ -17,6 +17,15 @@ import {
 } from "~/shadcn/ui/breadcrumb";
 import { Button } from "~/shadcn/ui/button";
 import {
+	Combobox,
+	ComboboxContent,
+	ComboboxEmpty,
+	ComboboxItem,
+	ComboboxList,
+	ComboboxTrigger,
+	ComboboxValue
+} from "~/shadcn/ui/combobox";
+import {
 	Empty,
 	EmptyDescription,
 	EmptyHeader,
@@ -30,13 +39,6 @@ import {
 	InputGroupInput
 } from "~/shadcn/ui/input-group";
 import { ItemGroup } from "~/shadcn/ui/item";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue
-} from "~/shadcn/ui/select";
 
 const currentStatus = [
 	{
@@ -90,13 +92,15 @@ export default async function IndexPage({ searchParams }: PageProps<"/">) {
 				<section className="m-6 bg-card p-6">
 					<Form
 						action="/"
-						className="flex flex-col flex-wrap items-center gap-6 md:flex-row"
+						className="flex flex-col flex-wrap items-end gap-6 md:flex-row"
 					>
-						<Field className="mr-auto w-full gap-0 md:max-w-72">
+						<Field
+							className="mr-auto w-full gap-0 md:max-w-72"
+							key={`search:${search}`}
+						>
 							<FieldLabel>Search for Examination</FieldLabel>
 							<InputGroup>
 								<InputGroupInput
-									key={search}
 									name="search"
 									autoComplete="off"
 									placeholder="Search for name and description"
@@ -109,50 +113,62 @@ export default async function IndexPage({ searchParams }: PageProps<"/">) {
 						</Field>
 
 						<Field
-							className="w-full gap-0 md:max-w-48"
+							className="w-full gap-0 md:max-w-40"
 							defaultValue={status}
+							key={`status:${status}`}
 						>
 							<FieldLabel>Current Status</FieldLabel>
-							<Select
-								key={status}
+							<Combobox
 								items={currentStatus}
-								name="status"
 								defaultValue={status}
+								name="status"
 							>
-								<SelectTrigger className="w-full md:max-w-48">
-									<SelectValue />
-								</SelectTrigger>
-
-								<SelectContent>
-									{currentStatus.map((stat) => (
-										<SelectItem
-											key={stat.value}
-											value={stat.value}
+								<ComboboxTrigger
+									render={
+										<Button
+											variant="outline"
+											className="md:w-fill w-full"
 										>
-											{stat.label}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
+											<ComboboxValue />
+										</Button>
+									}
+								/>
+
+								<ComboboxContent>
+									<ComboboxEmpty>
+										No status available
+									</ComboboxEmpty>
+									<ComboboxList>
+										{currentStatus.map((item) => (
+											<ComboboxItem
+												key={item.value}
+												value={item.value}
+											>
+												{item.label}
+											</ComboboxItem>
+										))}
+									</ComboboxList>
+								</ComboboxContent>
+							</Combobox>
 						</Field>
 
-						<Button
-							type="reset"
-							size="lg"
-							variant="destructive"
-							className="w-full md:w-fit"
-							nativeButton={false}
-							render={
-								<Link href="/">
-									<RotateCwIcon />
-									Reset
-								</Link>
-							}
-						/>
+						{(search || status) && (
+							<Button
+								type="reset"
+								variant="destructive"
+								className="w-full md:w-fit"
+								nativeButton={false}
+								render={
+									<Link href="/">
+										<RotateCwIcon />
+										Reset
+									</Link>
+								}
+							/>
+						)}
 
 						<Button
 							type="submit"
-							size="lg"
 							className="w-full md:w-fit"
 						>
 							<ListFilterIcon />
