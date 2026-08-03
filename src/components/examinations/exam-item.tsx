@@ -55,15 +55,17 @@ export function ExaminationItem({
 			<ItemActions>
 				<ExamItemOptions examination={examination} />
 			</ItemActions>
-			<ItemFooter
-				className={cn(
-					"bg-linear-to-r from-transparent via-transparent via-30% font-extrabold uppercase",
-					examination.isActive ?
-						"to-primary text-primary"
-					:	"to-destructive text-destructive"
-				)}
-			>
-				{examination.isActive ? "Preparing" : "Not Preparing"}
+			<ItemFooter className="flex-col">
+				<div
+					className={cn(
+						"w-full bg-linear-to-r from-transparent via-transparent via-30% font-extrabold uppercase",
+						examination.isActive ?
+							"to-primary text-primary"
+						:	"to-destructive text-destructive"
+					)}
+				>
+					{examination.isActive ? "Preparing" : "Not Preparing"}
+				</div>
 			</ItemFooter>
 		</Item>
 	);

@@ -1,32 +1,39 @@
-import { sqliteTable } from "drizzle-orm/sqlite-core";
+import { uniqueIndex, sqliteTable } from "drizzle-orm/sqlite-core";
 import { randomUUIDv7 } from "bun";
 import { sql } from "drizzle-orm";
 
-export const examinationTable = sqliteTable("examinations", (table) => ({
-	id: table
-		.text("id")
-		.primaryKey()
-		.$defaultFn(() => randomUUIDv7("hex")),
-	name: table.text("name").notNull(),
+export const examinationTable = sqliteTable(
+	"examinations",
+	(table) => ({
+		id: table
+			.text("id")
+			.primaryKey()
+			.$defaultFn(() => randomUUIDv7("hex")),
+		name: table.text("name").notNull(),
 
-	code: table.text("code").notNull(),
-	slug: table.text("slug").unique().notNull(),
+		code: table.text("code").notNull(),
+		slug: table.text("slug").unique().notNull(),
 
-	image: table.text("image").default("").notNull(),
+		image: table.text("image").default("").notNull(),
 
-	description: table.text("description").notNull().default(""),
-	isActive: table
-		.integer("is_active", { mode: "boolean" })
-		.notNull()
-		.default(true),
+		description: table.text("description").notNull().default(""),
+		isActive: table
+			.integer("is_active", { mode: "boolean" })
+			.notNull()
+			.default(true),
 
-	createdAt: table
-		.integer("created_at", { mode: "timestamp_ms" })
-		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-		.notNull(),
-	updatedAt: table
-		.integer("updated_at", { mode: "timestamp_ms" })
-		.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
-		.$onUpdate(() => /* @__PURE__ */ new Date())
-		.notNull()
-}));
+		createdAt: table
+			.integer("created_at", { mode: "timestamp_ms" })
+			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+			.notNull(),
+		updatedAt: table
+			.integer("updated_at", { mode: "timestamp_ms" })
+			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+			.$onUpdate(() => /* @__PURE__ */ new Date())
+			.notNull()
+	}),
+	(table) => [
+		uniqueIndex("idx_examinations_id").on(table.id),
+		uniqueIndex("idx_examinations_slug").on(table.slug)
+	]
+);
