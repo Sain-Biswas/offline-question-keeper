@@ -1,5 +1,9 @@
+import { ComponentIcon, LogsIcon, NotepadTextIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ChapterList } from "~/components/chapters/list";
+import { PaperList } from "~/components/papers/list";
+import { SubjectList } from "~/components/subjects/list";
 import { getExaminationDetails } from "~/server/actions/get-examination-details";
 import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";
 import {
@@ -11,6 +15,7 @@ import {
 	BreadcrumbSeparator
 } from "~/shadcn/ui/breadcrumb";
 import { Skeleton } from "~/shadcn/ui/skeleton";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/shadcn/ui/tabs";
 
 export default async function ExaminationPage({
 	params
@@ -64,6 +69,49 @@ export default async function ExaminationPage({
 						</p>
 					</article>
 				</section>
+
+				<Tabs
+					defaultValue="papers"
+					className="m-0 sm:m-6"
+				>
+					<TabsList variant="line">
+						<TabsTrigger value="papers">
+							<NotepadTextIcon />
+							Papers
+						</TabsTrigger>
+
+						<TabsTrigger value="subjects">
+							<ComponentIcon />
+							Subjects
+						</TabsTrigger>
+
+						<TabsTrigger value="chapters">
+							<LogsIcon />
+							Chapters
+						</TabsTrigger>
+					</TabsList>
+
+					<TabsContent
+						value="papers"
+						className="m-6 sm:mx-0"
+					>
+						<PaperList />
+					</TabsContent>
+
+					<TabsContent
+						value="subjects"
+						className="m-6 sm:mx-0"
+					>
+						<SubjectList />
+					</TabsContent>
+
+					<TabsContent
+						value="chapters"
+						className="m-6 sm:mx-0"
+					>
+						<ChapterList />
+					</TabsContent>
+				</Tabs>
 			</main>
 		</>
 	);
