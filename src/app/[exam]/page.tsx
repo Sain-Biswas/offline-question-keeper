@@ -95,7 +95,7 @@ export default async function ExaminationPage({
 						value="papers"
 						className="m-6 sm:mx-0"
 					>
-						<PaperList />
+						<PaperList examinationId={examination.id} />
 					</TabsContent>
 
 					<TabsContent
