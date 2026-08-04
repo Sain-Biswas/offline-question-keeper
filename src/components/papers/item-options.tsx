@@ -7,6 +7,7 @@ import {
 	useTransform
 } from "@tanstack/react-form-nextjs";
 import {
+	CircleQuestionMarkIcon,
 	CircleXIcon,
 	EllipsisIcon,
 	NotepadTextIcon,
@@ -14,6 +15,7 @@ import {
 	RotateCcwIcon
 } from "lucide-react";
 import Form from "next/form";
+import Link from "next/link";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { z } from "zod";
 import {
@@ -141,6 +143,18 @@ export function PaperListItemOptions({
 
 				<DropdownMenuPortal>
 					<DropdownMenuContent>
+						<DropdownMenuItem
+							render={
+								<Link
+									href={`/${examinationSlug}/question?paper=${paper.slug}`}
+								>
+									Questions
+									<DropdownMenuShortcut>
+										<CircleQuestionMarkIcon />
+									</DropdownMenuShortcut>
+								</Link>
+							}
+						/>
 						<DropdownMenuItem onClick={() => setOpenDialog(true)}>
 							Edit
 							<DropdownMenuShortcut>
