@@ -1,4 +1,5 @@
 import { randomUUIDv7 } from "bun";
+import { sql } from "drizzle-orm";
 import { index, sqliteTable, uniqueIndex } from "drizzle-orm/sqlite-core";
 import { paperTable } from "~/server/database/schemas/papers";
 
@@ -17,10 +18,19 @@ export const subjectTable = sqliteTable(
 		name: table.text("name").notNull(),
 
 		note: table.text("note").notNull().default(""),
-		description: table.text("description").notNull().default("")
+		description: table.text("description").notNull().default(""),
+
+		createdAt: table
+			.integer("created_at", { mode: "timestamp_ms" })
+			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+			.notNull(),
+		updatedAt: table
+			.integer("updated_at", { mode: "timestamp_ms" })
+			.default(sql`(cast(unixepoch('subsecond') * 1000 as integer))`)
+			.$onUpdate(() => /* @__PURE__ */ new Date())
+			.notNull()
 	}),
 	(table) => [
-		uniqueIndex("idx_subjects_id").on(table.id),
 		index("idx_subjects_on_papers_id").on(table.paperId),
 		uniqueIndex("idx_subjects_slug").on(table.slug)
 	]

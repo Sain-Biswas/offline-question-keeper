@@ -32,8 +32,5 @@ export const examinationTable = sqliteTable(
 			.$onUpdate(() => /* @__PURE__ */ new Date())
 			.notNull()
 	}),
-	(table) => [
-		uniqueIndex("idx_examinations_id").on(table.id),
-		uniqueIndex("idx_examinations_slug").on(table.slug)
-	]
+	(table) => [uniqueIndex("idx_examinations_slug").on(table.slug)]
 );
