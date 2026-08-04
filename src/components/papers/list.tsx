@@ -1,15 +1,122 @@
+import { getPaperList } from "~/server/fetchers/get-paper-list";
 import { NewPaperDialog } from "../forms/new-paper-dialog";
+import { ItemGroup } from "~/shadcn/ui/item";
+import { PaperListItem } from "./item";
+import {
+	Empty,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle
+} from "~/shadcn/ui/empty";
+import {
+	ListFilterIcon,
+	NotepadTextIcon,
+	RotateCwIcon,
+	TextSearchIcon
+} from "lucide-react";
+import Form from "next/form";
+import { Field, FieldLabel } from "~/shadcn/ui/field";
+import {
+	InputGroup,
+	InputGroupAddon,
+	InputGroupInput
+} from "~/shadcn/ui/input-group";
+import { Button } from "~/shadcn/ui/button";
+import Link from "next/link";
 
 interface PaperListProps {
 	examinationId: string;
+	search: string;
+	examinationSlug: string;
 }
 
-export async function PaperList({ examinationId }: PaperListProps) {
+export async function PaperList({
+	examinationId,
+	examinationSlug,
+	search
+}: PaperListProps) {
+	const papers = await getPaperList({ examinationId, search });
+
 	return (
 		<>
-			<section className="bg-card p-6">
+			<section className="flex items-end gap-6 bg-card p-6">
+				<Form
+					action={`/${examinationSlug}`}
+					className="flex w-full items-end gap-6"
+				>
+					<Field
+						className="mr-auto w-full gap-0 md:max-w-72"
+						key={`paperSearch:${search}`}
+					>
+						<FieldLabel>Search for Examination</FieldLabel>
+						<InputGroup>
+							<InputGroupInput
+								name="paperSearch"
+								autoComplete="off"
+								placeholder="Search for name and description"
+								defaultValue={search}
+							/>
+							<InputGroupAddon align="inline-start">
+								<TextSearchIcon />
+							</InputGroupAddon>
+						</InputGroup>
+					</Field>
+
+					{search && (
+						<Button
+							type="reset"
+							variant="destructive"
+							className="w-full md:w-fit"
+							size="lg"
+							key={examinationSlug}
+							nativeButton={false}
+							render={
+								<Link href={`/${examinationSlug}`}>
+									<RotateCwIcon />
+									Reset
+								</Link>
+							}
+						/>
+					)}
+
+					<Button
+						type="submit"
+						size="lg"
+						className="w-full md:w-fit"
+					>
+						<ListFilterIcon />
+						Filter
+					</Button>
+				</Form>
+
 				<NewPaperDialog examinationId={examinationId} />
 			</section>
+
+			{papers.length === 0 && (
+				<Empty>
+					<EmptyHeader>
+						<EmptyMedia variant="icon">
+							<NotepadTextIcon />
+						</EmptyMedia>
+
+						<EmptyTitle>No Papers to show</EmptyTitle>
+
+						<EmptyDescription>
+							Add new papers or try changing the filters applied.
+						</EmptyDescription>
+					</EmptyHeader>
+				</Empty>
+			)}
+
+			<ItemGroup className="my-6">
+				{papers.map((paper) => (
+					<PaperListItem
+						paper={paper}
+						key={paper.id}
+					/>
+				))}
+			</ItemGroup>
 		</>
 	);
 }

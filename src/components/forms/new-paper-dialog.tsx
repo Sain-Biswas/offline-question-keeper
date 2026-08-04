@@ -7,12 +7,11 @@ import {
 	useTransform
 } from "@tanstack/react-form-nextjs";
 import {
-	CirclePlayIcon,
 	CirclePlusIcon,
 	CircleXIcon,
 	LinkIcon,
-	RotateCcwIcon,
-	SignatureIcon
+	NotepadTextIcon,
+	RotateCcwIcon
 } from "lucide-react";
 import Form from "next/form";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
@@ -116,7 +115,7 @@ export function NewPaperDialog({ examinationId }: NewPaperDialogProps) {
 			<DialogTrigger
 				render={
 					<Button size="lg">
-						<CirclePlayIcon />
+						<CirclePlusIcon />
 						Add New Paper
 					</Button>
 				}
@@ -216,7 +215,7 @@ export function NewPaperDialog({ examinationId }: NewPaperDialogProps) {
 													autoComplete="off"
 												/>
 												<InputGroupAddon align="inline-start">
-													<SignatureIcon />
+													<NotepadTextIcon />
 												</InputGroupAddon>
 											</InputGroup>
 

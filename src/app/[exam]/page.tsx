@@ -18,9 +18,15 @@ import { Skeleton } from "~/shadcn/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/shadcn/ui/tabs";
 
 export default async function ExaminationPage({
-	params
+	params,
+	searchParams
 }: PageProps<"/[exam]">) {
 	const { exam } = await params;
+
+	const param = await searchParams;
+
+	const paperSearch = (param["paperSearch"] as string | undefined) || "";
+
 	const examination = await getExaminationDetails({ slug: exam });
 
 	if (!examination) notFound();
@@ -95,7 +101,11 @@ export default async function ExaminationPage({
 						value="papers"
 						className="m-6 sm:mx-0"
 					>
-						<PaperList examinationId={examination.id} />
+						<PaperList
+							examinationSlug={examination.slug}
+							examinationId={examination.id}
+							search={paperSearch}
+						/>
 					</TabsContent>
 
 					<TabsContent
