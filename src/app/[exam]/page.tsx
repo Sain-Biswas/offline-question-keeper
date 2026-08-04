@@ -26,6 +26,7 @@ export default async function ExaminationPage({
 	const param = await searchParams;
 
 	const paperSearch = (param["paperSearch"] as string | undefined) || "";
+	const subjectSearch = (param["subjectSearch"] as string | undefined) || "";
 
 	const examination = await getExaminationDetails({ slug: exam });
 
@@ -112,7 +113,11 @@ export default async function ExaminationPage({
 						value="subjects"
 						className="m-6 sm:mx-0"
 					>
-						<SubjectList />
+						<SubjectList
+							examinationId={examination.id}
+							examinationSlug={examination.slug}
+							search={subjectSearch}
+						/>
 					</TabsContent>
 
 					<TabsContent
