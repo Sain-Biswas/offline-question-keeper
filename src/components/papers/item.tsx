@@ -22,7 +22,7 @@ export function PaperListItem({ paper }: PaperListItemProps) {
 				{paper.note}
 			</ItemHeader>
 			<ItemContent>
-				<ItemTitle className="text-lg/relaxed">{paper.name}</ItemTitle>
+				<ItemTitle className="text-xl/relaxed">{paper.name}</ItemTitle>
 				<ItemDescription className="line-clamp-none text-justify text-sm/relaxed font-medium">
 					{paper.description}
 				</ItemDescription>

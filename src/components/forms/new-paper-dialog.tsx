@@ -53,9 +53,13 @@ import { toast } from "~/shadcn/ui/toast";
 
 interface NewPaperDialogProps {
 	examinationId: string;
+	examinationSlug: string;
 }
 
-export function NewPaperDialog({ examinationId }: NewPaperDialogProps) {
+export function NewPaperDialog({
+	examinationId,
+	examinationSlug
+}: NewPaperDialogProps) {
 	const [open, setOpen] = useState<boolean>(false);
 
 	const [state, action] = useActionState(createNewPaper, initialFormState);
@@ -64,6 +68,7 @@ export function NewPaperDialog({ examinationId }: NewPaperDialogProps) {
 		...newPaperFormOptions,
 		defaultValues: {
 			examinationId,
+			examinationSlug,
 			name: "",
 			slug: "",
 			description: "",
@@ -114,7 +119,7 @@ export function NewPaperDialog({ examinationId }: NewPaperDialogProps) {
 		>
 			<DialogTrigger
 				render={
-					<Button size="lg">
+					<Button className="w-full md:w-fit">
 						<CirclePlusIcon />
 						Add New Paper
 					</Button>
@@ -158,6 +163,43 @@ export function NewPaperDialog({ examinationId }: NewPaperDialogProps) {
 											key={examinationId}
 											name={field.name}
 											value={examinationId}
+											onBlur={field.handleBlur}
+											onChange={(event) =>
+												field.handleChange(
+													event.target.value
+												)
+											}
+											aria-invalid={isInvalid}
+											autoComplete="off"
+										/>
+									</Field>
+								);
+							}}
+						</form.Field>
+
+						<form.Field name="examinationSlug">
+							{(field) => {
+								const hasErrors =
+									field.state.meta.errors.length > 0;
+								const isInvalid =
+									(field.state.meta.isTouched
+										|| form.state.isSubmitted)
+									&& hasErrors;
+
+								return (
+									<Field
+										data-invalid={isInvalid}
+										key={examinationSlug}
+										className="hidden"
+									>
+										<FieldLabel>
+											Examination Slug
+										</FieldLabel>
+										<Input
+											id={field.name}
+											key={examinationSlug}
+											name={field.name}
+											value={examinationSlug}
 											onBlur={field.handleBlur}
 											onChange={(event) =>
 												field.handleChange(

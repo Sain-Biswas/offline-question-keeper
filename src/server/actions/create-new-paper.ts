@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-form-nextjs";
 import { SQLiteError } from "bun:sqlite";
 import { DrizzleQueryError } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 import {
 	newPaperFormOptions,
 	newPaperSchema
@@ -20,13 +21,21 @@ const serverValidate = createServerValidate({
 
 export async function createNewPaper(_prev: unknown, formData: FormData) {
 	try {
-		const { name, description, note, slug, examinationId } =
-			await serverValidate(formData);
+		const {
+			name,
+			description,
+			note,
+			slug,
+			examinationId,
+			examinationSlug
+		} = await serverValidate(formData);
 
 		const data = await database
 			.insert(paperTable)
 			.values({ description, name, slug, note, examinationId })
 			.returning();
+
+		revalidatePath(`/${examinationSlug}`);
 
 		return data;
 	} catch (error) {

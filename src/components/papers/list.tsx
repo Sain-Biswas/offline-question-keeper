@@ -40,16 +40,16 @@ export async function PaperList({
 
 	return (
 		<>
-			<section className="flex items-end gap-6 bg-card p-6">
+			<section className="flex flex-col items-end gap-6 bg-card p-6 md:flex-row">
 				<Form
 					action={`/${examinationSlug}`}
-					className="flex w-full items-end gap-6"
+					className="flex w-full flex-col items-end gap-6 md:flex-row"
 				>
 					<Field
 						className="mr-auto w-full gap-0 md:max-w-72"
 						key={`paperSearch:${search}`}
 					>
-						<FieldLabel>Search for Examination</FieldLabel>
+						<FieldLabel>Search for Paper</FieldLabel>
 						<InputGroup>
 							<InputGroupInput
 								name="paperSearch"
@@ -68,7 +68,6 @@ export async function PaperList({
 							type="reset"
 							variant="destructive"
 							className="w-full md:w-fit"
-							size="lg"
 							key={examinationSlug}
 							nativeButton={false}
 							render={
@@ -82,7 +81,6 @@ export async function PaperList({
 
 					<Button
 						type="submit"
-						size="lg"
 						className="w-full md:w-fit"
 					>
 						<ListFilterIcon />
@@ -90,7 +88,10 @@ export async function PaperList({
 					</Button>
 				</Form>
 
-				<NewPaperDialog examinationId={examinationId} />
+				<NewPaperDialog
+					examinationSlug={examinationSlug}
+					examinationId={examinationId}
+				/>
 			</section>
 
 			{papers.length === 0 && (

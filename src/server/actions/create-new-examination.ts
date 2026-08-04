@@ -13,6 +13,7 @@ import { examinationTable } from "../database/schema";
 import { DrizzleQueryError } from "drizzle-orm";
 
 import { SQLiteError } from "bun:sqlite";
+import { revalidatePath } from "next/cache";
 
 const serverValidate = createServerValidate({
 	...newExaminationFormOptions,
@@ -33,6 +34,8 @@ export async function createNewExamination(_prev: unknown, formData: FormData) {
 				description
 			})
 			.returning();
+
+		revalidatePath("/");
 
 		return data;
 	} catch (error) {
