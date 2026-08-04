@@ -9,25 +9,19 @@ import {
 import {
 	CircleXIcon,
 	EllipsisIcon,
-	ExternalLinkIcon,
-	ImageIcon,
-	LandmarkIcon,
+	NotepadTextIcon,
 	PencilSparklesIcon,
-	RotateCcwIcon,
-	Trash2Icon
+	RotateCcwIcon
 } from "lucide-react";
 import Form from "next/form";
-import Link from "next/link";
-import type { ChangeEvent } from "react";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { z } from "zod";
 import {
-	updateExaminationFormOptions,
-	updateExaminationSchema
-} from "~/options/forms/update-examination-options";
-import type { GetAllExaminationItemType } from "~/server/fetchers/get-all-examinations";
-import { updateExaminationDetails } from "~/server/actions/update-examination";
-import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";
+	updatePaperFormOptions,
+	updatePaperSchema
+} from "~/options/forms/update-paper-options";
+import { updatePaperDetails } from "~/server/actions/update-paper";
+import type { GetPaperListItemType } from "~/server/fetchers/get-paper-list";
 import { Button } from "~/shadcn/ui/button";
 import {
 	Dialog,
@@ -49,7 +43,6 @@ import {
 } from "~/shadcn/ui/dropdown-menu";
 import {
 	Field,
-	FieldContent,
 	FieldDescription,
 	FieldError,
 	FieldGroup,
@@ -63,34 +56,37 @@ import {
 	InputGroupTextarea
 } from "~/shadcn/ui/input-group";
 import { Spinner } from "~/shadcn/ui/spinner";
-import { Switch } from "~/shadcn/ui/switch";
 import { toast } from "~/shadcn/ui/toast";
 
-export function ExamItemOptions({
-	examination
-}: {
-	examination: GetAllExaminationItemType;
-}) {
+interface PaperListItemOptionsProps {
+	paper: GetPaperListItemType;
+	examinationSlug: string;
+}
+
+export function PaperListItemOptions({
+	paper,
+	examinationSlug
+}: PaperListItemOptionsProps) {
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 
 	const [state, action] = useActionState(
-		updateExaminationDetails,
+		updatePaperDetails,
 		initialFormState
 	);
 
 	const form = useForm({
-		...updateExaminationFormOptions,
+		...updatePaperFormOptions,
 
 		defaultValues: {
-			examinationId: examination.id,
-			name: examination.name,
-			description: examination.description,
-			isActive: examination.isActive ? "on" : undefined,
-			image: examination.image ?? ""
-		} as z.infer<typeof updateExaminationSchema>,
+			paperId: paper.id,
+			examinationSlug,
+			name: paper.name,
+			description: paper.description,
+			note: paper.note
+		} as z.infer<typeof updatePaperSchema>,
 
 		validators: {
-			onBlur: updateExaminationSchema
+			onBlur: updatePaperSchema
 		},
 
 		transform: useTransform(
@@ -102,8 +98,8 @@ export function ExamItemOptions({
 	const handleSuccess = useEffectEvent(() => {
 		toast.add({
 			type: "success",
-			title: "Examination Updated Successfully",
-			description: "If new data is not visible, refresh the page"
+			title: "Paper Updated Successfully",
+			description: "If new information is not visible, refresh the page"
 		});
 		form.reset();
 		setOpenDialog(false);
@@ -128,21 +124,6 @@ export function ExamItemOptions({
 		}
 	}, [state]);
 
-	const handleImageChange = (
-		e: ChangeEvent<HTMLInputElement>,
-		onChange: (value: string) => void
-	) => {
-		const file = e.target.files?.[0];
-		if (!file) return;
-
-		const reader = new FileReader();
-		reader.onloadend = () => {
-			const base64String = reader.result as string;
-			onChange(base64String);
-		};
-		reader.readAsDataURL(file);
-	};
-
 	return (
 		<>
 			<DropdownMenu>
@@ -151,7 +132,7 @@ export function ExamItemOptions({
 						<Button
 							size="icon"
 							variant="ghost"
-							aria-label={`Options for ${examination.code}`}
+							aria-label={`Options for `}
 						>
 							<EllipsisIcon />
 						</Button>
@@ -160,14 +141,6 @@ export function ExamItemOptions({
 
 				<DropdownMenuPortal>
 					<DropdownMenuContent>
-						<Link href={`/${examination.slug}`}>
-							<DropdownMenuItem>
-								Open
-								<DropdownMenuShortcut>
-									<ExternalLinkIcon />
-								</DropdownMenuShortcut>
-							</DropdownMenuItem>
-						</Link>
 						<DropdownMenuItem onClick={() => setOpenDialog(true)}>
 							Edit
 							<DropdownMenuShortcut>
@@ -185,7 +158,7 @@ export function ExamItemOptions({
 				<DialogPortal>
 					<DialogContent>
 						<DialogHeader>
-							<DialogTitle>Edit examination details</DialogTitle>
+							<DialogTitle>Edit paper details</DialogTitle>
 							<DialogDescription>
 								Only the following listed fields can be updated.
 								If current values are not visible please cancel
@@ -198,17 +171,7 @@ export function ExamItemOptions({
 							onSubmit={() => form.handleSubmit()}
 						>
 							<FieldGroup>
-								<form.Field name="image">
-									{(field) => (
-										<input
-											type="hidden"
-											name={field.name}
-											value={field.state.value ?? ""}
-										/>
-									)}
-								</form.Field>
-
-								<form.Field name="examinationId">
+								<form.Field name="paperId">
 									{(field) => {
 										const hasErrors =
 											field.state.meta.errors.length > 0;
@@ -221,15 +184,17 @@ export function ExamItemOptions({
 											<Field
 												data-invalid={isInvalid}
 												className="hidden"
+												key={paper.id}
 											>
 												<FieldLabel>
-													Examination ID
+													Paper ID
 												</FieldLabel>
 												<InputGroup>
 													<InputGroupInput
+														key={paper.id}
 														id={field.name}
 														name={field.name}
-														value={examination.id}
+														value={paper.id}
 														aria-invalid={isInvalid}
 														autoComplete="off"
 														onBlur={
@@ -237,21 +202,11 @@ export function ExamItemOptions({
 														}
 													/>
 												</InputGroup>
-
-												{isInvalid && (
-													<FieldError
-														errors={
-															field.state.meta
-																.errors
-														}
-													/>
-												)}
 											</Field>
 										);
 									}}
 								</form.Field>
-
-								<form.Field name="image">
+								<form.Field name="examinationSlug">
 									{(field) => {
 										const hasErrors =
 											field.state.meta.errors.length > 0;
@@ -261,71 +216,28 @@ export function ExamItemOptions({
 											&& hasErrors;
 
 										return (
-											<div className="flex gap-6">
-												<Avatar className="size-14 rounded-none after:content-none">
-													<AvatarImage
-														src={
-															field.state.value
-															?? examination.image
-															?? null
+											<Field
+												data-invalid={isInvalid}
+												className="hidden"
+												key={examinationSlug}
+											>
+												<FieldLabel>
+													Examination Slug
+												</FieldLabel>
+												<InputGroup>
+													<InputGroupInput
+														key={examinationSlug}
+														id={field.name}
+														name={field.name}
+														value={examinationSlug}
+														aria-invalid={isInvalid}
+														autoComplete="off"
+														onBlur={
+															field.handleBlur
 														}
-														className="rounded-none object-contain!"
 													/>
-													<AvatarFallback className="size-14 rounded-none">
-														<ImageIcon />
-													</AvatarFallback>
-												</Avatar>
-												<Field
-													data-invalid={isInvalid}
-													className="gap-0"
-												>
-													<FieldLabel>
-														Examination Image
-													</FieldLabel>
-
-													<InputGroup>
-														<InputGroupInput
-															type="file"
-															accept="image/*"
-															id={field.name}
-															onChange={(e) =>
-																handleImageChange(
-																	e,
-																	field.handleChange
-																)
-															}
-															onBlur={
-																field.handleBlur
-															}
-														/>
-														{field.state.value && (
-															<InputGroupAddon align="inline-end">
-																<Button
-																	type="button"
-																	variant="destructive"
-																	size="icon-sm"
-																	onClick={() =>
-																		field.handleChange(
-																			""
-																		)
-																	}
-																>
-																	<Trash2Icon />
-																</Button>
-															</InputGroupAddon>
-														)}
-													</InputGroup>
-
-													{isInvalid && (
-														<FieldError
-															errors={
-																field.state.meta
-																	.errors
-															}
-														/>
-													)}
-												</Field>
-											</div>
+												</InputGroup>
+											</Field>
 										);
 									}}
 								</form.Field>
@@ -343,14 +255,20 @@ export function ExamItemOptions({
 											<Field
 												data-invalid={isInvalid}
 												className="gap-0"
+												key={field.name}
 											>
 												<FieldLabel>
-													Examination Name
+													Paper Name
 												</FieldLabel>
+
 												<InputGroup>
 													<InputGroupInput
+														key={field.name}
 														id={field.name}
 														name={field.name}
+														aria-invalid={isInvalid}
+														placeholder="English"
+														autoComplete="off"
 														value={
 															field.state.value
 														}
@@ -363,13 +281,16 @@ export function ExamItemOptions({
 																	.value
 															)
 														}
-														aria-invalid={isInvalid}
-														autoComplete="off"
 													/>
 													<InputGroupAddon align="inline-start">
-														<LandmarkIcon />
+														<NotepadTextIcon />
 													</InputGroupAddon>
 												</InputGroup>
+
+												<FieldDescription>
+													Paper name associated with
+													this examination.
+												</FieldDescription>
 
 												{isInvalid && (
 													<FieldError
@@ -379,66 +300,6 @@ export function ExamItemOptions({
 														}
 													/>
 												)}
-											</Field>
-										);
-									}}
-								</form.Field>
-
-								<form.Field name="isActive">
-									{(field) => {
-										const hasErrors =
-											field.state.meta.errors.length > 0;
-										const isInvalid =
-											(field.state.meta.isTouched
-												|| form.state.isSubmitted)
-											&& hasErrors;
-
-										return (
-											<Field
-												orientation="horizontal"
-												data-invalid={isInvalid}
-											>
-												<FieldContent>
-													<FieldLabel
-														htmlFor={field.name}
-													>
-														Current Status
-													</FieldLabel>
-													<FieldDescription>
-														Changing the status
-														won&apos;t delete any
-														data, but helps in
-														filtering focused
-														Examination.
-													</FieldDescription>
-													{isInvalid && (
-														<FieldError
-															errors={
-																field.state.meta
-																	.errors
-															}
-														/>
-													)}
-												</FieldContent>
-
-												<Switch
-													id={field.name}
-													name={field.name}
-													checked={
-														field.state.value
-														=== "on"
-													}
-													onCheckedChange={(
-														checked
-													) =>
-														field.handleChange(
-															checked ? "on" : (
-																undefined
-															)
-														)
-													}
-													aria-invalid={isInvalid}
-												/>
 											</Field>
 										);
 									}}
@@ -457,6 +318,7 @@ export function ExamItemOptions({
 											<Field
 												data-invalid={isInvalid}
 												className="gap-0"
+												key={field.name}
 											>
 												<FieldLabel>
 													Description
@@ -465,29 +327,91 @@ export function ExamItemOptions({
 												<InputGroup>
 													<InputGroupTextarea
 														id={field.name}
+														key={field.name}
 														name={field.name}
+														aria-invalid={isInvalid}
+														placeholder="Optional summary or reference tags to help filter this exam."
+														autoComplete="off"
+														maxLength={250}
 														value={
 															field.state.value
 														}
 														onBlur={
 															field.handleBlur
 														}
-														maxLength={250}
 														onChange={(event) =>
 															field.handleChange(
 																event.target
 																	.value
 															)
 														}
-														aria-invalid={isInvalid}
-														placeholder="Optional summary or reference tags to help filter this exam."
-														autoComplete="off"
 													/>
 													<InputGroupAddon align="block-end">
 														<InputGroupText>
 															{field.state.value
 																?.length ?? 0}
 															/250 Character(s)
+														</InputGroupText>
+													</InputGroupAddon>
+												</InputGroup>
+
+												{isInvalid && (
+													<FieldError
+														errors={
+															field.state.meta
+																.errors
+														}
+													/>
+												)}
+											</Field>
+										);
+									}}
+								</form.Field>
+
+								<form.Field name="note">
+									{(field) => {
+										const hasErrors =
+											field.state.meta.errors.length > 0;
+										const isInvalid =
+											(field.state.meta.isTouched
+												|| form.state.isSubmitted)
+											&& hasErrors;
+
+										return (
+											<Field
+												data-invalid={isInvalid}
+												className="gap-0"
+												key={field.name}
+											>
+												<FieldLabel>Note</FieldLabel>
+
+												<InputGroup>
+													<InputGroupTextarea
+														id={field.name}
+														name={field.name}
+														key={field.name}
+														aria-invalid={isInvalid}
+														placeholder="Optional short note for future reference."
+														autoComplete="off"
+														maxLength={100}
+														value={
+															field.state.value
+														}
+														onBlur={
+															field.handleBlur
+														}
+														onChange={(event) =>
+															field.handleChange(
+																event.target
+																	.value
+															)
+														}
+													/>
+													<InputGroupAddon align="block-end">
+														<InputGroupText>
+															{field.state.value
+																?.length ?? 0}
+															/100 Character(s)
 														</InputGroupText>
 													</InputGroupAddon>
 												</InputGroup>
@@ -516,16 +440,17 @@ export function ExamItemOptions({
 											<>
 												<Button
 													variant="destructive"
+													disabled={isSubmitting}
 													onClick={(event) => {
 														event.preventDefault();
 														event.stopPropagation();
 														form.reset();
 													}}
-													disabled={isSubmitting}
 												>
 													<RotateCcwIcon />
 													Reset
 												</Button>
+
 												<DialogClose
 													render={
 														<Button
@@ -543,9 +468,13 @@ export function ExamItemOptions({
 														</Button>
 													}
 												/>
+
 												<Button
 													type="submit"
-													disabled={!canSubmit}
+													disabled={
+														!canSubmit
+														|| isSubmitting
+													}
 												>
 													{isSubmitting ?
 														<Spinner />

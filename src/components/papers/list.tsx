@@ -113,6 +113,7 @@ export async function PaperList({
 			<ItemGroup className="my-6">
 				{papers.map((paper) => (
 					<PaperListItem
+						examinationSlug={examinationSlug}
 						paper={paper}
 						key={paper.id}
 					/>
