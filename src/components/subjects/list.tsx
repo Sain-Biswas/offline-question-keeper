@@ -48,7 +48,9 @@ export async function SubjectList({
 }: SubjectListProps) {
 	const papers = await getPaperEntries({ examId: examinationId });
 	const subjects = await getSubjectList({
-		papers: papers.map((paper) => paper.value)
+		papers: papers.map((paper) => paper.value),
+		paperId: selectedPaper,
+		search
 	});
 
 	return (
