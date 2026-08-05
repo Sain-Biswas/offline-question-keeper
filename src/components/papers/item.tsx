@@ -5,7 +5,6 @@ import {
 	ItemContent,
 	ItemDescription,
 	ItemFooter,
-	ItemHeader,
 	ItemTitle
 } from "~/shadcn/ui/item";
 import { PaperListItemOptions } from "./item-options";
@@ -21,13 +20,15 @@ export function PaperListItem({ paper, examinationSlug }: PaperListItemProps) {
 			variant="muted"
 			aria-label={paper.name}
 		>
-			<ItemHeader className="text-sm/relaxed font-medium text-muted-foreground">
-				{paper.note ?? "No note available"}
-			</ItemHeader>
-			<ItemContent>
-				<ItemTitle className="text-xl/relaxed">{paper.name}</ItemTitle>
-				<ItemDescription className="line-clamp-none text-justify text-sm/relaxed font-medium">
+			<ItemContent className="gap-0">
+				<ItemTitle className="mb-1 text-xl/relaxed">
+					{paper.name}
+				</ItemTitle>
+				<ItemDescription className="line-clamp-none font-bold">
 					{paper.description ?? "No description available"}
+				</ItemDescription>
+				<ItemDescription className="line-clamp-none">
+					{paper.note ?? "No note available"}
 				</ItemDescription>
 			</ItemContent>
 			<ItemActions>

@@ -134,7 +134,7 @@ export function PaperListItemOptions({
 						<Button
 							size="icon"
 							variant="ghost"
-							aria-label={`Options for `}
+							aria-label={`Options for ${paper.name}`}
 						>
 							<EllipsisIcon />
 						</Button>
@@ -170,7 +170,7 @@ export function PaperListItemOptions({
 				onOpenChange={setOpenDialog}
 			>
 				<DialogPortal>
-					<DialogContent>
+					<DialogContent showCloseButton={false}>
 						<DialogHeader>
 							<DialogTitle>Edit paper details</DialogTitle>
 							<DialogDescription>

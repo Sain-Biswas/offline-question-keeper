@@ -20,6 +20,7 @@ export default async function QuestionPage({
 	const examination = await getExaminationDetails({ slug: exam });
 
 	const paper = (param["paper"] as string | undefined) ?? "";
+	const subject = (param["subject"] as string | undefined) ?? "";
 
 	if (!examination) notFound();
 
@@ -50,7 +51,10 @@ export default async function QuestionPage({
 					</BreadcrumbList>
 				</Breadcrumb>
 			</header>
-			<main className="m-6">{paper}</main>
+			<main className="m-6">
+				<p>{paper}</p>
+				<p>{subject}</p>
+			</main>
 		</>
 	);
 }

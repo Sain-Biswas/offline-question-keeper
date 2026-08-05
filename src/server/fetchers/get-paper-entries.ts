@@ -1,4 +1,4 @@
-import { database } from "../database";
+import { database } from "~/server/database";
 
 interface GetPaperEntriesProps {
 	examId: string;
