@@ -6,6 +6,24 @@ export const relations = defineRelations(schema, (relation) => ({
 		papers: relation.many.paperTable({
 			from: relation.examinationTable.id,
 			to: relation.paperTable.examinationId
+		}),
+
+		subjects: relation.many.subjectTable({
+			from: relation.examinationTable.id.through(
+				relation.examinationReferenceView.examinationId
+			),
+			to: relation.subjectTable.id.through(
+				relation.examinationReferenceView.subjectId
+			)
+		}),
+
+		chapters: relation.many.chapterTable({
+			from: relation.examinationTable.id.through(
+				relation.examinationReferenceView.examinationId
+			),
+			to: relation.chapterTable.id.through(
+				relation.examinationReferenceView.chapterId
+			)
 		})
 	},
 
@@ -18,10 +36,28 @@ export const relations = defineRelations(schema, (relation) => ({
 		subjects: relation.many.subjectTable({
 			from: relation.paperTable.id,
 			to: relation.subjectTable.paperId
+		}),
+
+		chapters: relation.many.chapterTable({
+			from: relation.paperTable.id.through(
+				relation.examinationReferenceView.paperId
+			),
+			to: relation.chapterTable.id.through(
+				relation.examinationReferenceView.chapterId
+			)
 		})
 	},
 
 	subjectTable: {
+		examinations: relation.many.examinationTable({
+			from: relation.subjectTable.id.through(
+				relation.examinationReferenceView.subjectId
+			),
+			to: relation.examinationTable.id.through(
+				relation.examinationReferenceView.examinationId
+			)
+		}),
+
 		paper: relation.one.paperTable({
 			from: relation.subjectTable.paperId,
 			to: relation.paperTable.id
@@ -34,6 +70,24 @@ export const relations = defineRelations(schema, (relation) => ({
 	},
 
 	chapterTable: {
+		examinations: relation.many.examinationTable({
+			from: relation.chapterTable.id.through(
+				relation.examinationReferenceView.chapterId
+			),
+			to: relation.examinationTable.id.through(
+				relation.examinationReferenceView.examinationId
+			)
+		}),
+
+		papers: relation.many.paperTable({
+			from: relation.chapterTable.id.through(
+				relation.examinationReferenceView.chapterId
+			),
+			to: relation.paperTable.id.through(
+				relation.examinationReferenceView.paperId
+			)
+		}),
+
 		subject: relation.one.subjectTable({
 			from: relation.chapterTable.subjectId,
 			to: relation.subjectTable.id
