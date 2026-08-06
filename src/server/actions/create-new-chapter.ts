@@ -7,26 +7,26 @@ import {
 import { SQLiteError } from "bun:sqlite";
 import { DrizzleQueryError } from "drizzle-orm";
 import {
-	newSubjectFormOptions,
-	newSubjectSchema
-} from "~/options/forms/new-subject-options";
+	newChapterFormOptions,
+	newChapterSchema
+} from "~/options/forms/new-chapter-options";
 import { database } from "~/server/database";
-import { subjectTable } from "~/server/database/schema";
+import { chapterTable } from "~/server/database/schema";
 import { revalidatePath } from "next/cache";
 
 const serverValidate = createServerValidate({
-	...newSubjectFormOptions,
-	onServerValidate: newSubjectSchema
+	...newChapterFormOptions,
+	onServerValidate: newChapterSchema
 });
 
-export async function createNewSubject(_prev: unknown, formData: FormData) {
+export async function createNewChapter(_prev: unknown, formData: FormData) {
 	try {
-		const { description, examinationSlug, name, note, paperId, slug } =
+		const { subjectId, description, examinationSlug, name, note, slug } =
 			await serverValidate(formData);
 
 		const data = await database
-			.insert(subjectTable)
-			.values({ paperId, name, slug, description, note })
+			.insert(chapterTable)
+			.values({ subjectId, name, slug, description, note })
 			.returning();
 
 		revalidatePath(`/${examinationSlug}`);
@@ -66,7 +66,7 @@ export async function createNewSubject(_prev: unknown, formData: FormData) {
 			}
 		}
 
-		console.error("New Subject: ", error);
+		console.error("New Chapter: ", error);
 
 		return [];
 	}

@@ -126,7 +126,10 @@ export default async function ExaminationPage({
 						value="chapters"
 						className="m-6 sm:mx-0"
 					>
-						<ChapterList />
+						<ChapterList
+							examinationId={examination.id}
+							examinationSlug={examination.slug}
+						/>
 					</TabsContent>
 				</Tabs>
 			</main>
