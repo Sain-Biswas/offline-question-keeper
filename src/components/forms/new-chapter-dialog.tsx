@@ -61,6 +61,12 @@ import {
 	ComboboxItem,
 	ComboboxList
 } from "~/shadcn/ui/combobox";
+import {
+	Item,
+	ItemContent,
+	ItemDescription,
+	ItemTitle
+} from "~/shadcn/ui/item";
 
 interface NewSubjectDialogProps {
 	subjects: GetSubjectEntriesType;
@@ -232,14 +238,20 @@ export function NewChapterDialog({
 															value={item}
 															className="flex-col items-start text-left"
 														>
-															<p className="font-extrabold uppercase">
-																{item.label}
-															</p>
-															<p className="text-xs font-medium text-muted-foreground uppercase">
-																{
-																	item.description
-																}
-															</p>
+															<Item className="m-0 p-0">
+																<ItemContent>
+																	<ItemTitle>
+																		{
+																			item.label
+																		}
+																	</ItemTitle>
+																	<ItemDescription>
+																		{
+																			item.description
+																		}
+																	</ItemDescription>
+																</ItemContent>
+															</Item>
 														</ComboboxItem>
 													)}
 												</ComboboxList>
