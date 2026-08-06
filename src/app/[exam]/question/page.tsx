@@ -21,6 +21,7 @@ export default async function QuestionPage({
 
 	const paper = (param["paper"] as string | undefined) ?? "";
 	const subject = (param["subject"] as string | undefined) ?? "";
+	const chapter = (param["chapter"] as string | undefined) ?? "";
 
 	if (!examination) notFound();
 
@@ -54,6 +55,7 @@ export default async function QuestionPage({
 			<main className="m-6">
 				<p>{paper}</p>
 				<p>{subject}</p>
+				<p>{chapter}</p>
 			</main>
 		</>
 	);

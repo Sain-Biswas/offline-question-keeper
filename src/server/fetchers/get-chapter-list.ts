@@ -24,13 +24,15 @@ export async function getChapterList({
 			},
 
 			columns: {
-				name: true
+				name: true,
+				slug: true
 			},
 
 			with: {
 				subjects: {
 					columns: {
-						name: true
+						name: true,
+						slug: true
 					},
 
 					where: {
@@ -68,7 +70,9 @@ export async function getChapterList({
 				return subject.chapters.map((chapter) => ({
 					...chapter,
 					subject: subject.name,
-					paper: paper.name
+					subjectSlug: subject.slug,
+					paper: paper.name,
+					paperSlug: paper.slug
 				}));
 			});
 		})

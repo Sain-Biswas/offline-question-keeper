@@ -2,11 +2,14 @@ import { DotIcon } from "lucide-react";
 import type { GetChapterListType } from "~/server/fetchers/get-chapter-list";
 import {
 	Item,
+	ItemActions,
 	ItemContent,
 	ItemDescription,
+	ItemFooter,
 	ItemHeader,
 	ItemTitle
 } from "~/shadcn/ui/item";
+import { ChapterListItemOptions } from "./item-options";
 
 interface ChapterListItemProps {
 	chapter: GetChapterListType[number];
@@ -33,12 +36,24 @@ export function ChapterListItem({
 					{chapter.name}
 				</ItemTitle>
 				<ItemDescription className="line-clamp-none font-bold">
-					{chapter.description ?? "No description available"}
+					{chapter.description || "No description available"}
 				</ItemDescription>
 				<ItemDescription className="line-clamp-none">
-					{chapter.note ?? "No note available"}
+					{chapter.note || "No note available"}
 				</ItemDescription>
 			</ItemContent>
+
+			<ItemActions>
+				<ChapterListItemOptions
+					chapter={chapter}
+					examinationSlug={examinationSlug}
+				/>
+			</ItemActions>
+
+			<ItemFooter className="justify-start text-xs/relaxed font-extrabold uppercase">
+				<span className="text-muted-foreground">Questions</span>{" "}
+				{0}{" "}
+			</ItemFooter>
 		</Item>
 	);
 }

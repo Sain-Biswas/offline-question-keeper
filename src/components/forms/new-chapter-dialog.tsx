@@ -292,7 +292,6 @@ export function NewChapterDialog({
 										<Field
 											data-invalid={isInvalid}
 											className="gap-0"
-											key={field.name}
 										>
 											<FieldLabel>
 												Chapter Name
@@ -303,6 +302,7 @@ export function NewChapterDialog({
 													id={field.name}
 													name={field.name}
 													value={field.state.value}
+													key={field.name}
 													onChange={(event) =>
 														field.handleChange(
 															event.target.value
@@ -347,7 +347,6 @@ export function NewChapterDialog({
 										<Field
 											data-invalid={isInvalid}
 											className="gap-0"
-											key={field.name}
 										>
 											<FieldLabel>
 												Chapter Slug
@@ -357,7 +356,7 @@ export function NewChapterDialog({
 												<InputGroupInput
 													id={field.name}
 													name={field.name}
-													key={field.state.value}
+													key={field.name}
 													value={field.state.value}
 													onChange={(event) =>
 														field.handleChange(
