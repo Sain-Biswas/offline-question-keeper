@@ -4,14 +4,14 @@ import {
 	createServerValidate,
 	ServerValidateError
 } from "@tanstack/react-form-nextjs";
+import { eq } from "drizzle-orm";
+import { refresh } from "next/cache";
 import {
 	updateSubjectFormOptions,
 	updateSubjectSchema
 } from "~/options/forms/update-subject-options";
 import { database } from "~/server/database";
 import { subjectTable } from "~/server/database/schema";
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 
 const serverValidate = createServerValidate({
 	...updateSubjectFormOptions,
@@ -20,7 +20,7 @@ const serverValidate = createServerValidate({
 
 export async function updateSubjectDetails(_prev: unknown, formData: FormData) {
 	try {
-		const { subjectId, description, examinationSlug, name, note } =
+		const { subjectId, description, name, note } =
 			await serverValidate(formData);
 
 		const data = await database
@@ -29,7 +29,7 @@ export async function updateSubjectDetails(_prev: unknown, formData: FormData) {
 			.where(eq(subjectTable.id, subjectId))
 			.returning();
 
-		revalidatePath(`/${examinationSlug}`);
+		refresh();
 
 		return data;
 	} catch (error) {

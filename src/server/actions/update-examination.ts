@@ -4,14 +4,14 @@ import {
 	createServerValidate,
 	ServerValidateError
 } from "@tanstack/react-form-nextjs";
+import { eq } from "drizzle-orm";
+import { refresh } from "next/cache";
 import {
 	updateExaminationFormOptions,
 	updateExaminationSchema
 } from "~/options/forms/update-examination-options";
 import { database } from "~/server/database";
 import { examinationTable } from "~/server/database/schema";
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 
 const serverValidate = createServerValidate({
 	...updateExaminationFormOptions,
@@ -32,7 +32,7 @@ export async function updateExaminationDetails(
 			.where(eq(examinationTable.id, examinationId))
 			.returning();
 
-		revalidatePath("/");
+		refresh();
 
 		return data;
 	} catch (error) {

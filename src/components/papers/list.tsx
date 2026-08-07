@@ -88,10 +88,7 @@ export async function PaperList({
 					</Button>
 				</Form>
 
-				<NewPaperDialog
-					examinationSlug={examinationSlug}
-					examinationId={examinationId}
-				/>
+				<NewPaperDialog examinationId={examinationId} />
 			</section>
 
 			{papers.length === 0 && (

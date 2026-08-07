@@ -6,13 +6,13 @@ import {
 } from "@tanstack/react-form-nextjs";
 import { SQLiteError } from "bun:sqlite";
 import { DrizzleQueryError } from "drizzle-orm";
+import { refresh } from "next/cache";
 import {
 	newSubjectFormOptions,
 	newSubjectSchema
 } from "~/options/forms/new-subject-options";
 import { database } from "~/server/database";
 import { subjectTable } from "~/server/database/schema";
-import { revalidatePath } from "next/cache";
 
 const serverValidate = createServerValidate({
 	...newSubjectFormOptions,
@@ -21,7 +21,7 @@ const serverValidate = createServerValidate({
 
 export async function createNewSubject(_prev: unknown, formData: FormData) {
 	try {
-		const { description, examinationSlug, name, note, paperId, slug } =
+		const { description, name, note, paperId, slug } =
 			await serverValidate(formData);
 
 		const data = await database
@@ -29,7 +29,7 @@ export async function createNewSubject(_prev: unknown, formData: FormData) {
 			.values({ paperId, name, slug, description, note })
 			.returning();
 
-		revalidatePath(`/${examinationSlug}`);
+		refresh();
 
 		return data;
 	} catch (error) {

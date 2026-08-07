@@ -3,7 +3,6 @@
 import {
 	initialFormState,
 	mergeForm,
-	useForm,
 	useTransform
 } from "@tanstack/react-form-nextjs";
 import {
@@ -11,13 +10,13 @@ import {
 	CircleXIcon,
 	ComponentIcon,
 	EllipsisIcon,
-	PencilSparklesIcon,
-	RotateCcwIcon
+	PencilSparklesIcon
 } from "lucide-react";
 import Form from "next/form";
 import Link from "next/link";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { z } from "zod";
+import { useAppForm } from "~/integrations/tanstack/forms/app-form";
 import { updateSubjectSchema } from "~/options/forms/update-subject-options";
 import { updateSubjectDetails } from "~/server/actions/update-subject";
 import type { GetSubjectListType } from "~/server/fetchers/get-subject-list";
@@ -40,21 +39,7 @@ import {
 	DropdownMenuShortcut,
 	DropdownMenuTrigger
 } from "~/shadcn/ui/dropdown-menu";
-import {
-	Field,
-	FieldDescription,
-	FieldError,
-	FieldGroup,
-	FieldLabel
-} from "~/shadcn/ui/field";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-	InputGroupTextarea
-} from "~/shadcn/ui/input-group";
-import { Spinner } from "~/shadcn/ui/spinner";
+import { FieldGroup } from "~/shadcn/ui/field";
 import { toast } from "~/shadcn/ui/toast";
 
 interface SubjectListItemOptionsProps {
@@ -73,10 +58,16 @@ export function SubjectListItemOptions({
 		initialFormState
 	);
 
-	const form = useForm({
+	const {
+		handleSubmit,
+		AppForm,
+		AppField,
+		reset,
+		SubmitButton,
+		ResetButton
+	} = useAppForm({
 		defaultValues: {
 			subjectId: subject.id,
-			examinationSlug,
 			name: subject.name ?? "",
 			description: subject.description ?? "",
 			note: subject.note ?? ""
@@ -94,7 +85,7 @@ export function SubjectListItemOptions({
 			title: "Subject Updated Successfully",
 			description: "If new information is not visible, refresh the page"
 		});
-		form.reset();
+		reset();
 		setOpenDialog(false);
 	});
 
@@ -162,7 +153,10 @@ export function SubjectListItemOptions({
 				onOpenChange={setOpenDialog}
 			>
 				<DialogPortal>
-					<DialogContent showCloseButton={false}>
+					<DialogContent
+						showCloseButton={false}
+						className="max-h-11/12 w-11/12 scrollbar-none overflow-scroll sm:max-w-3xl"
+					>
 						<DialogHeader>
 							<DialogTitle>Edit subject details</DialogTitle>
 							<DialogDescription>
@@ -174,306 +168,67 @@ export function SubjectListItemOptions({
 
 						<Form
 							action={action}
-							onSubmit={() => form.handleSubmit()}
+							onSubmit={() => handleSubmit()}
 						>
-							<FieldGroup>
-								<form.Field name="subjectId">
-									{(field) => {
-										const hasErrors =
-											field.state.meta.errors.length > 0;
-										const isInvalid =
-											(field.state.meta.isTouched
-												|| form.state.isSubmitted)
-											&& hasErrors;
+							<AppForm>
+								<FieldGroup>
+									<AppField name="subjectId">
+										{({ LiteralField }) => <LiteralField />}
+									</AppField>
 
-										return (
-											<Field
-												data-invalid={isInvalid}
-												className="hidden gap-0"
-											>
-												<FieldLabel>
-													Subject ID
-												</FieldLabel>
-												<InputGroup>
-													<InputGroupInput
-														id={field.name}
-														name={field.name}
-														value={
-															field.state.value
-														}
-														aria-invalid={isInvalid}
-														autoComplete="off"
-													/>
-												</InputGroup>
-											</Field>
-										);
-									}}
-								</form.Field>
+									<AppField name="name">
+										{({ TextField }) => (
+											<TextField
+												label="Subject Name"
+												fieldDescription="Paper name associated with this examination."
+												icon={ComponentIcon}
+												placeHolder="English"
+											/>
+										)}
+									</AppField>
 
-								<form.Field name="examinationSlug">
-									{(field) => {
-										const hasErrors =
-											field.state.meta.errors.length > 0;
-										const isInvalid =
-											(field.state.meta.isTouched
-												|| form.state.isSubmitted)
-											&& hasErrors;
+									<AppField name="description">
+										{({ TextareaField }) => (
+											<TextareaField
+												label="Description"
+												maxLength={250}
+												placeHolder="Optional summary or reference tags to help filter this exam."
+											/>
+										)}
+									</AppField>
 
-										return (
-											<Field
-												data-invalid={isInvalid}
-												className="hidden gap-0"
-											>
-												<FieldLabel>
-													Examination Slug
-												</FieldLabel>
-												<InputGroup>
-													<InputGroupInput
-														id={field.name}
-														name={field.name}
-														value={
-															field.state.value
-														}
-														aria-invalid={isInvalid}
-														autoComplete="off"
-													/>
-												</InputGroup>
-											</Field>
-										);
-									}}
-								</form.Field>
+									<AppField name="note">
+										{({ TextareaField }) => (
+											<TextareaField
+												label="Note"
+												maxLength={100}
+												placeHolder="Optional short note for future reference."
+											/>
+										)}
+									</AppField>
 
-								<form.Field name="name">
-									{(field) => {
-										const hasErrors =
-											field.state.meta.errors.length > 0;
-										const isInvalid =
-											(field.state.meta.isTouched
-												|| form.state.isSubmitted)
-											&& hasErrors;
-
-										return (
-											<Field
-												data-invalid={isInvalid}
-												className="gap-0"
-											>
-												<FieldLabel>
-													Subject Name
-												</FieldLabel>
-
-												<InputGroup>
-													<InputGroupInput
-														id={field.name}
-														name={field.name}
-														aria-invalid={isInvalid}
-														placeholder="English"
-														autoComplete="off"
-														value={
-															field.state.value
-														}
-														onChange={(event) =>
-															field.handleChange(
-																event.target
-																	.value
-															)
-														}
-													/>
-													<InputGroupAddon align="inline-start">
-														<ComponentIcon />
-													</InputGroupAddon>
-												</InputGroup>
-
-												<FieldDescription>
-													Paper name associated with
-													this examination.
-												</FieldDescription>
-
-												{isInvalid && (
-													<FieldError
-														errors={
-															field.state.meta
-																.errors
-														}
-													/>
-												)}
-											</Field>
-										);
-									}}
-								</form.Field>
-
-								<form.Field name="description">
-									{(field) => {
-										const hasErrors =
-											field.state.meta.errors.length > 0;
-										const isInvalid =
-											(field.state.meta.isTouched
-												|| form.state.isSubmitted)
-											&& hasErrors;
-
-										return (
-											<Field
-												data-invalid={isInvalid}
-												className="gap-0"
-											>
-												<FieldLabel>
-													Description
-												</FieldLabel>
-
-												<InputGroup>
-													<InputGroupTextarea
-														id={field.name}
-														name={field.name}
-														aria-invalid={isInvalid}
-														placeholder="Optional summary or reference tags to help filter this exam."
-														autoComplete="off"
-														maxLength={250}
-														value={
-															field.state.value
-														}
-														onChange={(event) =>
-															field.handleChange(
-																event.target
-																	.value
-															)
-														}
-													/>
-													<InputGroupAddon align="block-end">
-														<InputGroupText>
-															{field.state.value
-																?.length ?? 0}
-															/250 Character(s)
-														</InputGroupText>
-													</InputGroupAddon>
-												</InputGroup>
-
-												{isInvalid && (
-													<FieldError
-														errors={
-															field.state.meta
-																.errors
-														}
-													/>
-												)}
-											</Field>
-										);
-									}}
-								</form.Field>
-
-								<form.Field name="note">
-									{(field) => {
-										const hasErrors =
-											field.state.meta.errors.length > 0;
-										const isInvalid =
-											(field.state.meta.isTouched
-												|| form.state.isSubmitted)
-											&& hasErrors;
-
-										return (
-											<Field
-												data-invalid={isInvalid}
-												className="gap-0"
-											>
-												<FieldLabel>Note</FieldLabel>
-
-												<InputGroup>
-													<InputGroupTextarea
-														id={field.name}
-														name={field.name}
-														aria-invalid={isInvalid}
-														placeholder="Optional short note for future reference."
-														autoComplete="off"
-														maxLength={100}
-														value={
-															field.state.value
-														}
-														onChange={(event) =>
-															field.handleChange(
-																event.target
-																	.value
-															)
-														}
-													/>
-													<InputGroupAddon align="block-end">
-														<InputGroupText>
-															{field.state.value
-																?.length ?? 0}
-															/100 Character(s)
-														</InputGroupText>
-													</InputGroupAddon>
-												</InputGroup>
-
-												{isInvalid && (
-													<FieldError
-														errors={
-															field.state.meta
-																.errors
-														}
-													/>
-												)}
-											</Field>
-										);
-									}}
-								</form.Field>
-
-								<DialogFooter>
-									<form.Subscribe
-										selector={(formState) => [
-											formState.canSubmit,
-											formState.isSubmitting
-										]}
-									>
-										{([canSubmit, isSubmitting]) => (
-											<>
+									<DialogFooter>
+										<ResetButton />
+										<DialogClose
+											render={
 												<Button
 													type="button"
-													variant="destructive"
-													disabled={isSubmitting}
+													variant="outline"
 													onClick={(event) => {
 														event.preventDefault();
 														event.stopPropagation();
-														form.reset();
+														reset();
 													}}
 												>
-													<RotateCcwIcon />
-													Reset
+													<CircleXIcon />
+													Cancel
 												</Button>
-
-												<DialogClose
-													render={
-														<Button
-															type="button"
-															variant="outline"
-															onClick={(
-																event
-															) => {
-																event.preventDefault();
-																event.stopPropagation();
-																form.reset();
-															}}
-														>
-															<CircleXIcon />
-															Cancel
-														</Button>
-													}
-												/>
-
-												<Button
-													type="submit"
-													disabled={
-														!canSubmit
-														|| isSubmitting
-													}
-												>
-													{isSubmitting ?
-														<Spinner />
-													:	<PencilSparklesIcon />}
-													Update
-												</Button>
-											</>
-										)}
-									</form.Subscribe>
-								</DialogFooter>
-							</FieldGroup>
+											}
+										/>
+										<SubmitButton purpose="Update" />
+									</DialogFooter>
+								</FieldGroup>
+							</AppForm>
 						</Form>
 					</DialogContent>
 				</DialogPortal>

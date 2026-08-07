@@ -72,7 +72,7 @@ export function TextareaField({
 				/>
 				<InputGroupAddon align="block-end">
 					<InputGroupText>
-						{value?.length || 0}/250 Character(s)
+						{value?.length || 0}/{maxLength} Character(s)
 					</InputGroupText>
 				</InputGroupAddon>
 			</InputGroup>

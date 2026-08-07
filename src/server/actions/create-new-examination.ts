@@ -4,16 +4,16 @@ import {
 	ServerValidateError,
 	createServerValidate
 } from "@tanstack/react-form-nextjs";
+import { DrizzleQueryError } from "drizzle-orm";
 import {
 	newExaminationFormOptions,
 	newExaminationSchema
 } from "~/options/forms/new-examination-options";
-import { database } from "../database";
-import { examinationTable } from "../database/schema";
-import { DrizzleQueryError } from "drizzle-orm";
+import { database } from "~/server/database";
+import { examinationTable } from "~/server/database/schema";
 
 import { SQLiteError } from "bun:sqlite";
-import { revalidatePath } from "next/cache";
+import { refresh } from "next/cache";
 
 const serverValidate = createServerValidate({
 	...newExaminationFormOptions,
@@ -35,7 +35,7 @@ export async function createNewExamination(_prev: unknown, formData: FormData) {
 			})
 			.returning();
 
-		revalidatePath("/");
+		refresh();
 
 		return data;
 	} catch (error) {

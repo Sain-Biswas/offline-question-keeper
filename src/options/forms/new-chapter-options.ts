@@ -5,13 +5,6 @@ import { z } from "zod";
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 export const newChapterSchema = z.object({
-	examinationSlug: z
-		.string()
-		.min(1, { message: " Examination Slug is required." })
-		.regex(SLUG_REGEX, {
-			error: "Examination Slug must contain only lowercase letters, numbers, and hyphens."
-		}),
-
 	subjectId: z.uuidv7({ error: "Please provide a valid Subject ID." }),
 
 	name: z.string().min(1, { error: "Subject name is required." }),
@@ -33,7 +26,6 @@ export const newChapterSchema = z.object({
 export const newChapterFormOptions = formOptions({
 	defaultValues: {
 		subjectId: "",
-		examinationSlug: "",
 		name: "",
 		description: "",
 		note: "",

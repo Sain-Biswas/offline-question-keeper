@@ -6,13 +6,13 @@ import {
 } from "@tanstack/react-form-nextjs";
 import { SQLiteError } from "bun:sqlite";
 import { DrizzleQueryError } from "drizzle-orm";
+import { refresh } from "next/cache";
 import {
 	newChapterFormOptions,
 	newChapterSchema
 } from "~/options/forms/new-chapter-options";
 import { database } from "~/server/database";
 import { chapterTable } from "~/server/database/schema";
-import { revalidatePath } from "next/cache";
 
 const serverValidate = createServerValidate({
 	...newChapterFormOptions,
@@ -21,7 +21,7 @@ const serverValidate = createServerValidate({
 
 export async function createNewChapter(_prev: unknown, formData: FormData) {
 	try {
-		const { subjectId, description, examinationSlug, name, note, slug } =
+		const { subjectId, description, name, note, slug } =
 			await serverValidate(formData);
 
 		const data = await database
@@ -29,7 +29,7 @@ export async function createNewChapter(_prev: unknown, formData: FormData) {
 			.values({ subjectId, name, slug, description, note })
 			.returning();
 
-		revalidatePath(`/${examinationSlug}`);
+		refresh();
 
 		return data;
 	} catch (error) {

@@ -9,6 +9,7 @@ import { TextareaField } from "~/integrations/tanstack/forms/components/field/te
 import { LiteralField } from "~/integrations/tanstack/forms/components/field/literal";
 import { SwitchField } from "~/integrations/tanstack/forms/components/field/switch";
 import { ImageDataField } from "~/integrations/tanstack/forms/components/field/image";
+import { ComboboxField } from "~/integrations/tanstack/forms/components/field/combobox";
 
 import { SubmitButton } from "~/integrations/tanstack/forms/components/form/button-submit";
 import { ResetButton } from "~/integrations/tanstack/forms/components/form/button-reset";
@@ -20,7 +21,8 @@ export const { useAppForm } = createFormHook({
 		TextareaField,
 		LiteralField,
 		SwitchField,
-		ImageDataField
+		ImageDataField,
+		ComboboxField
 	},
 
 	formContext,

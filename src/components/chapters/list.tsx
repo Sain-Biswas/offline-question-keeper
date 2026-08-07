@@ -142,10 +142,7 @@ export async function ChapterList({
 					Filter
 				</Button>
 
-				<NewChapterDialog
-					examSlug={examinationSlug}
-					subjects={subjects}
-				/>
+				<NewChapterDialog subjects={subjects} />
 			</section>
 
 			{chapters.length === 0 && (

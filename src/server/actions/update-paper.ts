@@ -4,14 +4,14 @@ import {
 	createServerValidate,
 	ServerValidateError
 } from "@tanstack/react-form-nextjs";
+import { eq } from "drizzle-orm";
+import { refresh } from "next/cache";
 import {
 	updatePaperFormOptions,
 	updatePaperSchema
 } from "~/options/forms/update-paper-options";
-import { database } from "../database";
-import { paperTable } from "../database/schema";
-import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
+import { database } from "~/server/database";
+import { paperTable } from "~/server/database/schema";
 
 const serverValidate = createServerValidate({
 	...updatePaperFormOptions,
@@ -20,7 +20,7 @@ const serverValidate = createServerValidate({
 
 export async function updatePaperDetails(_prev: unknown, formData: FormData) {
 	try {
-		const { description, examinationSlug, name, note, paperId } =
+		const { description, name, note, paperId } =
 			await serverValidate(formData);
 
 		const data = await database
@@ -29,7 +29,7 @@ export async function updatePaperDetails(_prev: unknown, formData: FormData) {
 			.where(eq(paperTable.id, paperId))
 			.returning();
 
-		revalidatePath(`/${examinationSlug}`);
+		refresh();
 
 		return data;
 	} catch (error) {

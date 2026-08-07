@@ -3,20 +3,19 @@
 import {
 	initialFormState,
 	mergeForm,
-	useForm,
 	useTransform
 } from "@tanstack/react-form-nextjs";
 import {
+	ArrowUpRight,
 	CirclePlusIcon,
 	CircleXIcon,
-	LinkIcon,
-	NotepadTextIcon,
-	RotateCcwIcon
+	NotepadTextIcon
 } from "lucide-react";
 import Form from "next/form";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { slugify } from "transliteration";
 import { z } from "zod";
+import { useAppForm } from "~/integrations/tanstack/forms/app-form";
 import { newPaperSchema } from "~/options/forms/new-paper-options";
 import { createNewPaper } from "~/server/actions/create-new-paper";
 import { Button } from "~/shadcn/ui/button";
@@ -30,41 +29,28 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from "~/shadcn/ui/dialog";
-import {
-	Field,
-	FieldDescription,
-	FieldError,
-	FieldGroup,
-	FieldLabel
-} from "~/shadcn/ui/field";
-import { Input } from "~/shadcn/ui/input";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-	InputGroupTextarea
-} from "~/shadcn/ui/input-group";
-import { Spinner } from "~/shadcn/ui/spinner";
+import { FieldDescription, FieldGroup } from "~/shadcn/ui/field";
 import { toast } from "~/shadcn/ui/toast";
 
 interface NewPaperDialogProps {
 	examinationId: string;
-	examinationSlug: string;
 }
 
-export function NewPaperDialog({
-	examinationId,
-	examinationSlug
-}: NewPaperDialogProps) {
+export function NewPaperDialog({ examinationId }: NewPaperDialogProps) {
 	const [open, setOpen] = useState<boolean>(false);
 
 	const [state, action] = useActionState(createNewPaper, initialFormState);
 
-	const form = useForm({
+	const {
+		AppField,
+		AppForm,
+		SubmitButton,
+		ResetButton,
+		reset,
+		handleSubmit
+	} = useAppForm({
 		defaultValues: {
 			examinationId,
-			examinationSlug,
 			name: "",
 			slug: "",
 			description: "",
@@ -83,7 +69,7 @@ export function NewPaperDialog({
 			title: "Paper added successfully!",
 			description: "You can now add subjects to proceed further."
 		});
-		form.reset();
+		reset();
 		setOpen(false);
 	});
 
@@ -122,7 +108,7 @@ export function NewPaperDialog({
 
 			<DialogContent
 				showCloseButton={false}
-				className="max-h-11/12 w-11/12 max-w-xl scrollbar-none overflow-scroll"
+				className="max-h-11/12 w-11/12 scrollbar-none overflow-scroll sm:max-w-3xl"
 			>
 				<DialogHeader>
 					<DialogTitle>Add New Paper</DialogTitle>
@@ -133,355 +119,96 @@ export function NewPaperDialog({
 
 				<Form
 					action={action}
-					onSubmit={() => form.handleSubmit()}
+					onSubmit={() => handleSubmit()}
 				>
-					<FieldGroup>
-						<form.Field name="examinationId">
-							{(field) => {
-								const hasErrors =
-									field.state.meta.errors.length > 0;
-								const isInvalid =
-									(field.state.meta.isTouched
-										|| form.state.isSubmitted)
-									&& hasErrors;
+					<AppForm>
+						<FieldGroup>
+							<AppField name="examinationId">
+								{({ LiteralField }) => <LiteralField />}
+							</AppField>
 
-								return (
-									<Field
-										data-invalid={isInvalid}
-										key={examinationId}
-										className="hidden"
-									>
-										<FieldLabel>Examination ID</FieldLabel>
-										<Input
-											id={field.name}
-											key={examinationId}
-											name={field.name}
-											value={examinationId}
-											onBlur={field.handleBlur}
-											onChange={(event) =>
-												field.handleChange(
-													event.target.value
-												)
+							<div className="space-y-3">
+								<div className="grid gap-3 md:grid-cols-2">
+									<AppField
+										name="name"
+										listeners={{
+											onChange: ({ fieldApi, value }) => {
+												fieldApi.form.setFieldValue(
+													"slug",
+													slugify(value)
+												);
 											}
-											aria-invalid={isInvalid}
-											autoComplete="off"
-										/>
-									</Field>
-								);
-							}}
-						</form.Field>
-
-						<form.Field name="examinationSlug">
-							{(field) => {
-								const hasErrors =
-									field.state.meta.errors.length > 0;
-								const isInvalid =
-									(field.state.meta.isTouched
-										|| form.state.isSubmitted)
-									&& hasErrors;
-
-								return (
-									<Field
-										data-invalid={isInvalid}
-										key={examinationSlug}
-										className="hidden"
-									>
-										<FieldLabel>
-											Examination Slug
-										</FieldLabel>
-										<Input
-											id={field.name}
-											key={examinationSlug}
-											name={field.name}
-											value={examinationSlug}
-											onBlur={field.handleBlur}
-											onChange={(event) =>
-												field.handleChange(
-													event.target.value
-												)
-											}
-											aria-invalid={isInvalid}
-											autoComplete="off"
-										/>
-									</Field>
-								);
-							}}
-						</form.Field>
-
-						<div className="grid gap-6 md:grid-cols-2">
-							<form.Field
-								name="name"
-								listeners={{
-									onChange: ({ fieldApi, value }) => {
-										fieldApi.form.setFieldValue(
-											"slug",
-											slugify(value)
-										);
-									}
-								}}
-							>
-								{(field) => {
-									const hasErrors =
-										field.state.meta.errors.length > 0;
-									const isInvalid =
-										(field.state.meta.isTouched
-											|| form.state.isSubmitted)
-										&& hasErrors;
-
-									return (
-										<Field
-											data-invalid={isInvalid}
-											className="gap-0"
-										>
-											<FieldLabel>Paper Name</FieldLabel>
-
-											<InputGroup>
-												<InputGroupInput
-													id={field.name}
-													name={field.name}
-													value={field.state.value}
-													onBlur={field.handleBlur}
-													onChange={(event) =>
-														field.handleChange(
-															event.target.value
-														)
-													}
-													aria-invalid={isInvalid}
-													placeholder="English"
-													autoComplete="off"
-												/>
-												<InputGroupAddon align="inline-start">
-													<NotepadTextIcon />
-												</InputGroupAddon>
-											</InputGroup>
-
-											<FieldDescription>
-												Paper name associated with this
-												examination.
-											</FieldDescription>
-
-											{isInvalid && (
-												<FieldError
-													errors={
-														field.state.meta.errors
-													}
-												/>
-											)}
-										</Field>
-									);
-								}}
-							</form.Field>
-
-							<form.Field name="slug">
-								{(field) => {
-									const hasErrors =
-										field.state.meta.errors.length > 0;
-									const isInvalid =
-										(field.state.meta.isTouched
-											|| form.state.isSubmitted)
-										&& hasErrors;
-
-									return (
-										<Field
-											data-invalid={isInvalid}
-											className="gap-0"
-										>
-											<FieldLabel>Paper Slug</FieldLabel>
-
-											<InputGroup>
-												<InputGroupInput
-													id={field.name}
-													name={field.name}
-													value={field.state.value}
-													onBlur={field.handleBlur}
-													onChange={(event) =>
-														field.handleChange(
-															event.target.value
-														)
-													}
-													aria-invalid={isInvalid}
-													placeholder="english"
-													autoComplete="off"
-												/>
-												<InputGroupAddon align="inline-start">
-													<LinkIcon />
-												</InputGroupAddon>
-											</InputGroup>
-
-											<FieldDescription>
-												URL-friendly key auto-generated
-												from the name.
-											</FieldDescription>
-
-											{isInvalid && (
-												<FieldError
-													errors={
-														field.state.meta.errors
-													}
-												/>
-											)}
-										</Field>
-									);
-								}}
-							</form.Field>
-						</div>
-
-						<form.Field name="description">
-							{(field) => {
-								const hasErrors =
-									field.state.meta.errors.length > 0;
-								const isInvalid =
-									(field.state.meta.isTouched
-										|| form.state.isSubmitted)
-									&& hasErrors;
-
-								return (
-									<Field
-										data-invalid={isInvalid}
-										className="gap-0"
-									>
-										<FieldLabel>Description</FieldLabel>
-
-										<InputGroup>
-											<InputGroupTextarea
-												id={field.name}
-												name={field.name}
-												value={field.state.value}
-												onBlur={field.handleBlur}
-												maxLength={250}
-												onChange={(event) =>
-													field.handleChange(
-														event.target.value
-													)
-												}
-												aria-invalid={isInvalid}
-												placeholder="Optional summary or reference tags to help filter this exam."
-												autoComplete="off"
-											/>
-											<InputGroupAddon align="block-end">
-												<InputGroupText>
-													{field.state.value?.length
-														?? 0}
-													/250 Character(s)
-												</InputGroupText>
-											</InputGroupAddon>
-										</InputGroup>
-
-										{isInvalid && (
-											<FieldError
-												errors={field.state.meta.errors}
+										}}
+										// eslint-disable-next-line react/no-children-prop
+										children={({ TextField }) => (
+											<TextField
+												label="Paper Name"
+												placeHolder="English"
+												fieldDescription="Paper name associated with this examination."
+												icon={NotepadTextIcon}
 											/>
 										)}
-									</Field>
-								);
-							}}
-						</form.Field>
+									/>
 
-						<form.Field name="note">
-							{(field) => {
-								const hasErrors =
-									field.state.meta.errors.length > 0;
-								const isInvalid =
-									(field.state.meta.isTouched
-										|| form.state.isSubmitted)
-									&& hasErrors;
-
-								return (
-									<Field
-										data-invalid={isInvalid}
-										className="gap-0"
-									>
-										<FieldLabel>Note</FieldLabel>
-
-										<InputGroup>
-											<InputGroupTextarea
-												id={field.name}
-												name={field.name}
-												value={field.state.value}
-												onBlur={field.handleBlur}
-												maxLength={100}
-												onChange={(event) =>
-													field.handleChange(
-														event.target.value
-													)
-												}
-												aria-invalid={isInvalid}
-												placeholder="Optional short note for future reference."
-												autoComplete="off"
-											/>
-											<InputGroupAddon align="block-end">
-												<InputGroupText>
-													{field.state.value?.length
-														?? 0}
-													/100 Character(s)
-												</InputGroupText>
-											</InputGroupAddon>
-										</InputGroup>
-
-										{isInvalid && (
-											<FieldError
-												errors={field.state.meta.errors}
+									<AppField name="slug">
+										{({ TextField }) => (
+											<TextField
+												label="Paper Slug"
+												placeHolder="english"
+												fieldDescription="URL-friendly key auto-generated from the name."
+												icon={ArrowUpRight}
 											/>
 										)}
-									</Field>
-								);
-							}}
-						</form.Field>
+									</AppField>
+								</div>
+								<FieldDescription className="text-chart-1">
+									If slug don&apos;t auto update cancel the
+									form and start again.
+								</FieldDescription>
+							</div>
 
-						<DialogFooter>
-							<form.Subscribe
-								selector={(formState) => [
-									formState.canSubmit,
-									formState.isSubmitting
-								]}
-							>
-								{([canSubmit, isSubmitting]) => (
-									<>
+							<AppField name="description">
+								{({ TextareaField }) => (
+									<TextareaField
+										label="Description"
+										maxLength={250}
+										placeHolder="Optional summary or reference tags to help filter this paper."
+									/>
+								)}
+							</AppField>
+
+							<AppField name="note">
+								{({ TextareaField }) => (
+									<TextareaField
+										label="Note"
+										maxLength={100}
+										placeHolder="Optional short note on this paper for future reference."
+									/>
+								)}
+							</AppField>
+
+							<DialogFooter>
+								<ResetButton />
+								<DialogClose
+									render={
 										<Button
-											variant="destructive"
-											disabled={isSubmitting}
+											type="button"
+											variant="outline"
 											onClick={(event) => {
 												event.preventDefault();
 												event.stopPropagation();
-												form.reset();
+												reset();
 											}}
 										>
-											<RotateCcwIcon />
-											Reset
+											<CircleXIcon />
+											Cancel
 										</Button>
-
-										<DialogClose
-											render={
-												<Button
-													variant="outline"
-													onClick={(event) => {
-														event.preventDefault();
-														event.stopPropagation();
-														form.reset();
-													}}
-												>
-													<CircleXIcon />
-													Cancel
-												</Button>
-											}
-										/>
-
-										<Button
-											type="submit"
-											disabled={
-												!canSubmit || isSubmitting
-											}
-										>
-											{isSubmitting ?
-												<Spinner />
-											:	<CirclePlusIcon />}
-											Create
-										</Button>
-									</>
-								)}
-							</form.Subscribe>
-						</DialogFooter>
-					</FieldGroup>
+									}
+								/>
+								<SubmitButton purpose="Create" />
+							</DialogFooter>
+						</FieldGroup>
+					</AppForm>
 				</Form>
 			</DialogContent>
 		</Dialog>

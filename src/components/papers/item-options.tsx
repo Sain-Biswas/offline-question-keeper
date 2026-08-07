@@ -3,7 +3,6 @@
 import {
 	initialFormState,
 	mergeForm,
-	useForm,
 	useTransform
 } from "@tanstack/react-form-nextjs";
 import {
@@ -11,13 +10,13 @@ import {
 	CircleXIcon,
 	EllipsisIcon,
 	NotepadTextIcon,
-	PencilSparklesIcon,
-	RotateCcwIcon
+	PencilSparklesIcon
 } from "lucide-react";
 import Form from "next/form";
 import Link from "next/link";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { z } from "zod";
+import { useAppForm } from "~/integrations/tanstack/forms/app-form";
 import { updatePaperSchema } from "~/options/forms/update-paper-options";
 import { updatePaperDetails } from "~/server/actions/update-paper";
 import type { GetPaperListItemType } from "~/server/fetchers/get-paper-list";
@@ -40,21 +39,7 @@ import {
 	DropdownMenuShortcut,
 	DropdownMenuTrigger
 } from "~/shadcn/ui/dropdown-menu";
-import {
-	Field,
-	FieldDescription,
-	FieldError,
-	FieldGroup,
-	FieldLabel
-} from "~/shadcn/ui/field";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-	InputGroupTextarea
-} from "~/shadcn/ui/input-group";
-import { Spinner } from "~/shadcn/ui/spinner";
+import { FieldGroup } from "~/shadcn/ui/field";
 import { toast } from "~/shadcn/ui/toast";
 
 interface PaperListItemOptionsProps {
@@ -73,10 +58,16 @@ export function PaperListItemOptions({
 		initialFormState
 	);
 
-	const form = useForm({
+	const {
+		handleSubmit,
+		AppField,
+		AppForm,
+		SubmitButton,
+		ResetButton,
+		reset
+	} = useAppForm({
 		defaultValues: {
 			paperId: paper.id,
-			examinationSlug,
 			name: paper.name,
 			description: paper.description,
 			note: paper.note
@@ -94,7 +85,7 @@ export function PaperListItemOptions({
 			title: "Paper Updated Successfully",
 			description: "If new information is not visible, refresh the page"
 		});
-		form.reset();
+		reset();
 		setOpenDialog(false);
 	});
 
@@ -161,7 +152,10 @@ export function PaperListItemOptions({
 				onOpenChange={setOpenDialog}
 			>
 				<DialogPortal>
-					<DialogContent showCloseButton={false}>
+					<DialogContent
+						showCloseButton={false}
+						className="max-h-11/12 w-11/12 scrollbar-none overflow-scroll sm:max-w-3xl"
+					>
 						<DialogHeader>
 							<DialogTitle>Edit paper details</DialogTitle>
 							<DialogDescription>
@@ -173,324 +167,62 @@ export function PaperListItemOptions({
 
 						<Form
 							action={action}
-							onSubmit={() => form.handleSubmit()}
+							onSubmit={() => handleSubmit()}
 						>
-							<FieldGroup>
-								<form.Field name="paperId">
-									{(field) => {
-										const hasErrors =
-											field.state.meta.errors.length > 0;
-										const isInvalid =
-											(field.state.meta.isTouched
-												|| form.state.isSubmitted)
-											&& hasErrors;
+							<AppForm>
+								<FieldGroup>
+									<AppField name="paperId">
+										{({ LiteralField }) => <LiteralField />}
+									</AppField>
 
-										return (
-											<Field
-												data-invalid={isInvalid}
-												className="hidden"
-												key={paper.id}
-											>
-												<FieldLabel>
-													Paper ID
-												</FieldLabel>
-												<InputGroup>
-													<InputGroupInput
-														key={paper.id}
-														id={field.name}
-														name={field.name}
-														value={paper.id}
-														aria-invalid={isInvalid}
-														autoComplete="off"
-														onBlur={
-															field.handleBlur
-														}
-													/>
-												</InputGroup>
-											</Field>
-										);
-									}}
-								</form.Field>
-								<form.Field name="examinationSlug">
-									{(field) => {
-										const hasErrors =
-											field.state.meta.errors.length > 0;
-										const isInvalid =
-											(field.state.meta.isTouched
-												|| form.state.isSubmitted)
-											&& hasErrors;
-
-										return (
-											<Field
-												data-invalid={isInvalid}
-												className="hidden"
-												key={examinationSlug}
-											>
-												<FieldLabel>
-													Examination Slug
-												</FieldLabel>
-												<InputGroup>
-													<InputGroupInput
-														key={examinationSlug}
-														id={field.name}
-														name={field.name}
-														value={examinationSlug}
-														aria-invalid={isInvalid}
-														autoComplete="off"
-														onBlur={
-															field.handleBlur
-														}
-													/>
-												</InputGroup>
-											</Field>
-										);
-									}}
-								</form.Field>
-
-								<form.Field name="name">
-									{(field) => {
-										const hasErrors =
-											field.state.meta.errors.length > 0;
-										const isInvalid =
-											(field.state.meta.isTouched
-												|| form.state.isSubmitted)
-											&& hasErrors;
-
-										return (
-											<Field
-												data-invalid={isInvalid}
-												className="gap-0"
-												key={field.name}
-											>
-												<FieldLabel>
-													Paper Name
-												</FieldLabel>
-
-												<InputGroup>
-													<InputGroupInput
-														key={field.name}
-														id={field.name}
-														name={field.name}
-														aria-invalid={isInvalid}
-														placeholder="English"
-														autoComplete="off"
-														value={
-															field.state.value
-														}
-														onBlur={
-															field.handleBlur
-														}
-														onChange={(event) =>
-															field.handleChange(
-																event.target
-																	.value
-															)
-														}
-													/>
-													<InputGroupAddon align="inline-start">
-														<NotepadTextIcon />
-													</InputGroupAddon>
-												</InputGroup>
-
-												<FieldDescription>
-													Paper name associated with
-													this examination.
-												</FieldDescription>
-
-												{isInvalid && (
-													<FieldError
-														errors={
-															field.state.meta
-																.errors
-														}
-													/>
-												)}
-											</Field>
-										);
-									}}
-								</form.Field>
-
-								<form.Field name="description">
-									{(field) => {
-										const hasErrors =
-											field.state.meta.errors.length > 0;
-										const isInvalid =
-											(field.state.meta.isTouched
-												|| form.state.isSubmitted)
-											&& hasErrors;
-
-										return (
-											<Field
-												data-invalid={isInvalid}
-												className="gap-0"
-												key={field.name}
-											>
-												<FieldLabel>
-													Description
-												</FieldLabel>
-
-												<InputGroup>
-													<InputGroupTextarea
-														id={field.name}
-														key={field.name}
-														name={field.name}
-														aria-invalid={isInvalid}
-														placeholder="Optional summary or reference tags to help filter this exam."
-														autoComplete="off"
-														maxLength={250}
-														value={
-															field.state.value
-														}
-														onBlur={
-															field.handleBlur
-														}
-														onChange={(event) =>
-															field.handleChange(
-																event.target
-																	.value
-															)
-														}
-													/>
-													<InputGroupAddon align="block-end">
-														<InputGroupText>
-															{field.state.value
-																?.length ?? 0}
-															/250 Character(s)
-														</InputGroupText>
-													</InputGroupAddon>
-												</InputGroup>
-
-												{isInvalid && (
-													<FieldError
-														errors={
-															field.state.meta
-																.errors
-														}
-													/>
-												)}
-											</Field>
-										);
-									}}
-								</form.Field>
-
-								<form.Field name="note">
-									{(field) => {
-										const hasErrors =
-											field.state.meta.errors.length > 0;
-										const isInvalid =
-											(field.state.meta.isTouched
-												|| form.state.isSubmitted)
-											&& hasErrors;
-
-										return (
-											<Field
-												data-invalid={isInvalid}
-												className="gap-0"
-												key={field.name}
-											>
-												<FieldLabel>Note</FieldLabel>
-
-												<InputGroup>
-													<InputGroupTextarea
-														id={field.name}
-														name={field.name}
-														key={field.name}
-														aria-invalid={isInvalid}
-														placeholder="Optional short note for future reference."
-														autoComplete="off"
-														maxLength={100}
-														value={
-															field.state.value
-														}
-														onBlur={
-															field.handleBlur
-														}
-														onChange={(event) =>
-															field.handleChange(
-																event.target
-																	.value
-															)
-														}
-													/>
-													<InputGroupAddon align="block-end">
-														<InputGroupText>
-															{field.state.value
-																?.length ?? 0}
-															/100 Character(s)
-														</InputGroupText>
-													</InputGroupAddon>
-												</InputGroup>
-
-												{isInvalid && (
-													<FieldError
-														errors={
-															field.state.meta
-																.errors
-														}
-													/>
-												)}
-											</Field>
-										);
-									}}
-								</form.Field>
-
-								<DialogFooter>
-									<form.Subscribe
-										selector={(formState) => [
-											formState.canSubmit,
-											formState.isSubmitting
-										]}
-									>
-										{([canSubmit, isSubmitting]) => (
-											<>
-												<Button
-													variant="destructive"
-													disabled={isSubmitting}
-													onClick={(event) => {
-														event.preventDefault();
-														event.stopPropagation();
-														form.reset();
-													}}
-												>
-													<RotateCcwIcon />
-													Reset
-												</Button>
-
-												<DialogClose
-													render={
-														<Button
-															variant="outline"
-															onClick={(
-																event
-															) => {
-																event.preventDefault();
-																event.stopPropagation();
-																form.reset();
-															}}
-														>
-															<CircleXIcon />
-															Cancel
-														</Button>
-													}
-												/>
-
-												<Button
-													type="submit"
-													disabled={
-														!canSubmit
-														|| isSubmitting
-													}
-												>
-													{isSubmitting ?
-														<Spinner />
-													:	<PencilSparklesIcon />}
-													Update
-												</Button>
-											</>
+									<AppField name="name">
+										{({ TextField }) => (
+											<TextField
+												label="Paper Name"
+												placeHolder="English"
+												fieldDescription="Paper name associated with this examination."
+												icon={NotepadTextIcon}
+											/>
 										)}
-									</form.Subscribe>
-								</DialogFooter>
-							</FieldGroup>
+									</AppField>
+
+									<AppField name="description">
+										{({ TextareaField }) => (
+											<TextareaField
+												label="Description"
+												maxLength={250}
+												placeHolder="Optional summary or reference tags to help filter this exam."
+											/>
+										)}
+									</AppField>
+
+									<AppField name="note">
+										{({ TextareaField }) => (
+											<TextareaField
+												label="Note"
+												maxLength={100}
+												placeHolder="Optional short note for future reference."
+											/>
+										)}
+									</AppField>
+
+									<DialogFooter>
+										<ResetButton />
+										<DialogClose
+											render={
+												<Button
+													variant="outline"
+													onClick={() => reset()}
+												>
+													<CircleXIcon />
+													Cancel
+												</Button>
+											}
+										/>
+										<SubmitButton purpose="Update" />
+									</DialogFooter>
+								</FieldGroup>
+							</AppForm>
 						</Form>
 					</DialogContent>
 				</DialogPortal>

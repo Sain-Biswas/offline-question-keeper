@@ -139,10 +139,7 @@ export async function SubjectList({
 					Filter
 				</Button>
 
-				<NewSubjectDialog
-					examSlug={examinationSlug}
-					papers={papers}
-				/>
+				<NewSubjectDialog papers={papers} />
 			</section>
 
 			{subjects.length === 0 && (

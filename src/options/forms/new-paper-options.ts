@@ -8,12 +8,7 @@ export const newPaperSchema = z.object({
 	examinationId: z.uuidv7({
 		error: "Please provide a valid Examination ID."
 	}),
-	examinationSlug: z
-		.string()
-		.min(1, { message: " Examination Slug is required." })
-		.regex(SLUG_REGEX, {
-			error: "Examination Slug must contain only lowercase letters, numbers, and hyphens."
-		}),
+
 	name: z.string().min(1, { error: "Paper name is required." }),
 
 	slug: z.string().min(1, { error: "Slug is required." }).regex(SLUG_REGEX, {
@@ -35,6 +30,7 @@ export const newPaperFormOptions = formOptions({
 		description: "",
 		name: "",
 		note: "",
-		slug: ""
+		slug: "",
+		examinationId: ""
 	} as z.infer<typeof newPaperSchema>
 });
