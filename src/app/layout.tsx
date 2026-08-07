@@ -3,7 +3,7 @@ import { Geist_Mono, Space_Grotesk } from "next/font/google";
 import { cn } from "~/lib/utils";
 import "~/app/globals.css";
 import { Toaster } from "~/shadcn/ui/toast";
-import { ThemeProvider } from "~/components/dark-mode/theme-provider";
+import { ThemeProvider } from "~/integrations/next-themes/theme-provider";
 import { TanstackDevtoolsProvider } from "~/components/tanstack/devtools/provider";
 
 const spaceGrotesk = Space_Grotesk({
