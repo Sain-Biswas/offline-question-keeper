@@ -3,19 +3,18 @@
 import {
 	initialFormState,
 	mergeForm,
-	useForm,
 	useTransform
 } from "@tanstack/react-form-nextjs";
 import {
+	ArrowUpRight,
 	CirclePlusIcon,
 	CircleXIcon,
 	LandmarkIcon,
-	LinkIcon,
-	RotateCcwIcon,
 	SignatureIcon
 } from "lucide-react";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { slugify } from "transliteration";
+import { useAppForm } from "~/integrations/tanstack/forms/app-form";
 import { newExaminationFormOptions } from "~/options/forms/new-examination-options";
 import { createNewExamination } from "~/server/actions/create-new-examination";
 import { Button } from "~/shadcn/ui/button";
@@ -29,21 +28,7 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from "~/shadcn/ui/dialog";
-import {
-	Field,
-	FieldDescription,
-	FieldError,
-	FieldGroup,
-	FieldLabel
-} from "~/shadcn/ui/field";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput,
-	InputGroupText,
-	InputGroupTextarea
-} from "~/shadcn/ui/input-group";
-import { Spinner } from "~/shadcn/ui/spinner";
+import { FieldDescription, FieldGroup } from "~/shadcn/ui/field";
 import { toast } from "~/shadcn/ui/toast";
 
 export function NewExaminationDialog() {
@@ -54,7 +39,14 @@ export function NewExaminationDialog() {
 		initialFormState
 	);
 
-	const form = useForm({
+	const {
+		AppField,
+		AppForm,
+		reset,
+		handleSubmit,
+		SubmitButton,
+		ResetButton
+	} = useAppForm({
 		...newExaminationFormOptions,
 
 		transform: useTransform(
@@ -69,7 +61,7 @@ export function NewExaminationDialog() {
 			description: "You can now start preparation for this examination.",
 			type: "success"
 		});
-		form.reset();
+		reset();
 		setOpen(false);
 	});
 
@@ -108,7 +100,7 @@ export function NewExaminationDialog() {
 
 			<DialogContent
 				showCloseButton={false}
-				className="max-h-11/12 w-11/12 max-w-lg scrollbar-none overflow-scroll"
+				className="max-h-11/12 w-11/12 scrollbar-none overflow-scroll sm:max-w-3xl"
 			>
 				<DialogHeader>
 					<DialogTitle>Add New Examination</DialogTitle>
@@ -119,261 +111,88 @@ export function NewExaminationDialog() {
 
 				<form
 					action={action}
-					onSubmit={() => form.handleSubmit()}
+					onSubmit={() => handleSubmit()}
 				>
-					<FieldGroup>
-						<form.Field name="name">
-							{(field) => {
-								const isInvalid =
-									field.state.meta.isTouched
-									&& !field.state.meta.isValid;
-
-								return (
-									<Field data-invalid={isInvalid}>
-										<FieldLabel htmlFor={field.name}>
-											Examination Name
-										</FieldLabel>
-
-										<InputGroup>
-											<InputGroupInput
-												id={field.name}
-												name={field.name}
-												value={field.state.value}
-												onBlur={field.handleBlur}
-												onChange={(event) =>
-													field.handleChange(
-														event.target.value
-													)
-												}
-												aria-invalid={isInvalid}
-												placeholder="Joint Entrance Examination"
-												autoComplete="off"
-											/>
-											<InputGroupAddon align="inline-start">
-												<SignatureIcon />
-											</InputGroupAddon>
-										</InputGroup>
-
-										<FieldDescription>
-											Enter the official full title of the
-											examination.
-										</FieldDescription>
-
-										{isInvalid && (
-											<FieldError
-												errors={field.state.meta.errors}
-											/>
-										)}
-									</Field>
-								);
-							}}
-						</form.Field>
-
-						<div className="grid gap-6 md:grid-cols-2">
-							<form.Field
-								name="code"
-								listeners={{
-									onChange: ({ fieldApi, value }) => {
-										fieldApi.form.setFieldValue(
-											"slug",
-											slugify(value)
-										);
-									}
-								}}
-							>
-								{(field) => {
-									const isInvalid =
-										field.state.meta.isTouched
-										&& !field.state.meta.isValid;
-
-									return (
-										<Field data-invalid={isInvalid}>
-											<FieldLabel>
-												Examination Code
-											</FieldLabel>
-
-											<InputGroup>
-												<InputGroupInput
-													id={field.name}
-													name={field.name}
-													value={field.state.value}
-													onBlur={field.handleBlur}
-													onChange={(event) =>
-														field.handleChange(
-															event.target.value
-														)
-													}
-													aria-invalid={isInvalid}
-													placeholder="JEE"
-													autoComplete="off"
-												/>
-												<InputGroupAddon align="inline-start">
-													<LandmarkIcon />
-												</InputGroupAddon>
-											</InputGroup>
-
-											<FieldDescription>
-												Short identifier or acronym used
-												across tests.
-											</FieldDescription>
-
-											{isInvalid && (
-												<FieldError
-													errors={
-														field.state.meta.errors
-													}
-												/>
-											)}
-										</Field>
-									);
-								}}
-							</form.Field>
-
-							<form.Field name="slug">
-								{(field) => {
-									const isInvalid =
-										field.state.meta.isTouched
-										&& !field.state.meta.isValid;
-
-									return (
-										<Field data-invalid={isInvalid}>
-											<FieldLabel>
-												Examination Slug
-											</FieldLabel>
-
-											<InputGroup>
-												<InputGroupInput
-													id={field.name}
-													name={field.name}
-													value={field.state.value}
-													onBlur={field.handleBlur}
-													onChange={(event) =>
-														field.handleChange(
-															event.target.value
-														)
-													}
-													aria-invalid={isInvalid}
-													placeholder="jee"
-													autoComplete="off"
-												/>
-												<InputGroupAddon align="inline-start">
-													<LinkIcon />
-												</InputGroupAddon>
-											</InputGroup>
-
-											<FieldDescription>
-												URL-friendly key auto-generated
-												from the code.
-											</FieldDescription>
-
-											{isInvalid && (
-												<FieldError
-													errors={
-														field.state.meta.errors
-													}
-												/>
-											)}
-										</Field>
-									);
-								}}
-							</form.Field>
-						</div>
-
-						<form.Field name="description">
-							{(field) => {
-								const isInvalid =
-									field.state.meta.isTouched
-									&& !field.state.meta.isValid;
-
-								return (
-									<Field data-invalid={isInvalid}>
-										<FieldLabel>Description</FieldLabel>
-
-										<InputGroup>
-											<InputGroupTextarea
-												id={field.name}
-												name={field.name}
-												value={field.state.value}
-												onBlur={field.handleBlur}
-												maxLength={250}
-												onChange={(event) =>
-													field.handleChange(
-														event.target.value
-													)
-												}
-												aria-invalid={isInvalid}
-												placeholder="Optional summary or reference tags to help filter this exam."
-												autoComplete="off"
-											/>
-											<InputGroupAddon align="block-end">
-												<InputGroupText>
-													{field.state.value?.length
-														?? 0}
-													/250 Character(s)
-												</InputGroupText>
-											</InputGroupAddon>
-										</InputGroup>
-
-										{isInvalid && (
-											<FieldError
-												errors={field.state.meta.errors}
-											/>
-										)}
-									</Field>
-								);
-							}}
-						</form.Field>
-
-						<DialogFooter>
-							<form.Subscribe
-								selector={(formState) => [
-									formState.canSubmit,
-									formState.isSubmitting
-								]}
-							>
-								{([canSubmit, isSubmitting]) => (
-									<>
-										<Button
-											variant="destructive"
-											onClick={(event) => {
-												event.preventDefault();
-												event.stopPropagation();
-												form.reset();
-											}}
-											disabled={isSubmitting}
-										>
-											<RotateCcwIcon />
-											Reset
-										</Button>
-										<DialogClose
-											render={
-												<Button
-													variant="outline"
-													onClick={(event) => {
-														event.preventDefault();
-														event.stopPropagation();
-														form.reset();
-													}}
-												>
-													<CircleXIcon />
-													Cancel
-												</Button>
-											}
-										/>
-										<Button
-											type="submit"
-											disabled={!canSubmit}
-										>
-											{isSubmitting ?
-												<Spinner />
-											:	<CirclePlusIcon />}
-											Create
-										</Button>
-									</>
+					<AppForm>
+						<FieldGroup>
+							<AppField name="name">
+								{({ TextField }) => (
+									<TextField
+										label="Examination Name"
+										placeHolder="Joint Entrance Examination"
+										fieldDescription="Enter the official full title of the examination."
+										icon={SignatureIcon}
+									/>
 								)}
-							</form.Subscribe>
-						</DialogFooter>
-					</FieldGroup>
+							</AppField>
+
+							<div className="space-y-3">
+								<div className="grid gap-3 md:grid-cols-2">
+									<AppField
+										name="code"
+										listeners={{
+											onChange: ({ fieldApi, value }) => {
+												fieldApi.form.setFieldValue(
+													"slug",
+													slugify(value)
+												);
+											}
+										}}
+										// eslint-disable-next-line react/no-children-prop
+										children={({ TextField }) => (
+											<TextField
+												label="Examination Code"
+												placeHolder="JEE"
+												fieldDescription="Short identifier or acronym used across tests."
+												icon={LandmarkIcon}
+											/>
+										)}
+									/>
+
+									<AppField name="slug">
+										{({ TextField }) => (
+											<TextField
+												label="Examination Slug"
+												placeHolder="jee"
+												fieldDescription="URL-friendly key auto-generated from the code."
+												icon={ArrowUpRight}
+											/>
+										)}
+									</AppField>
+								</div>
+								<FieldDescription className="text-chart-1">
+									If slug don&apos;t auto update cancel the
+									form and start again.
+								</FieldDescription>
+							</div>
+
+							<AppField name="description">
+								{({ TextareaField }) => (
+									<TextareaField
+										label="Description"
+										maxLength={250}
+										placeHolder="Optional summary or reference tags to help filter this exam."
+									/>
+								)}
+							</AppField>
+
+							<DialogFooter>
+								<ResetButton />
+								<DialogClose
+									render={
+										<Button
+											variant="outline"
+											onClick={() => reset()}
+										>
+											<CircleXIcon />
+											Cancel
+										</Button>
+									}
+								/>
+								<SubmitButton purpose="Create" />
+							</DialogFooter>
+						</FieldGroup>
+					</AppForm>
 				</form>
 			</DialogContent>
 		</Dialog>

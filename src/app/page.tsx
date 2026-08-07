@@ -102,6 +102,7 @@ export default async function IndexPage({ searchParams }: PageProps<"/">) {
 							<InputGroup>
 								<InputGroupInput
 									name="search"
+									key="search"
 									autoComplete="off"
 									placeholder="Search for name and description"
 									defaultValue={search}

@@ -4,7 +4,7 @@ import { cn } from "~/lib/utils";
 import "~/app/globals.css";
 import { Toaster } from "~/shadcn/ui/toast";
 import { ThemeProvider } from "~/integrations/next-themes/theme-provider";
-import { TanstackDevtoolsProvider } from "~/components/tanstack/devtools/provider";
+import { TanstackDevtoolsProvider } from "~/integrations/tanstack/devtools/provider";
 
 const spaceGrotesk = Space_Grotesk({
 	subsets: ["latin"],
