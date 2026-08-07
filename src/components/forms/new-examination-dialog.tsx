@@ -16,10 +16,7 @@ import {
 } from "lucide-react";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { slugify } from "transliteration";
-import {
-	newExaminationFormOptions,
-	newExaminationSchema
-} from "~/options/forms/new-examination-options";
+import { newExaminationFormOptions } from "~/options/forms/new-examination-options";
 import { createNewExamination } from "~/server/actions/create-new-examination";
 import { Button } from "~/shadcn/ui/button";
 import {
@@ -59,9 +56,7 @@ export function NewExaminationDialog() {
 
 	const form = useForm({
 		...newExaminationFormOptions,
-		validators: {
-			onBlur: newExaminationSchema
-		},
+
 		transform: useTransform(
 			(baseForm) => mergeForm(baseForm, state!),
 			[state]

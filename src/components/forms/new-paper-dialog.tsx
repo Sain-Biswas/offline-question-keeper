@@ -17,10 +17,7 @@ import Form from "next/form";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { slugify } from "transliteration";
 import { z } from "zod";
-import {
-	newPaperFormOptions,
-	newPaperSchema
-} from "~/options/forms/new-paper-options";
+import { newPaperSchema } from "~/options/forms/new-paper-options";
 import { createNewPaper } from "~/server/actions/create-new-paper";
 import { Button } from "~/shadcn/ui/button";
 import {
@@ -65,7 +62,6 @@ export function NewPaperDialog({
 	const [state, action] = useActionState(createNewPaper, initialFormState);
 
 	const form = useForm({
-		...newPaperFormOptions,
 		defaultValues: {
 			examinationId,
 			examinationSlug,
@@ -74,9 +70,7 @@ export function NewPaperDialog({
 			description: "",
 			note: ""
 		} as z.infer<typeof newPaperSchema>,
-		validators: {
-			onBlur: newPaperSchema
-		},
+
 		transform: useTransform(
 			(baseForm) => mergeForm(baseForm, state!),
 			[state]

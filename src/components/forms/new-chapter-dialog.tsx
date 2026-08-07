@@ -18,10 +18,7 @@ import Form from "next/form";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { slugify } from "transliteration";
 import { z } from "zod";
-import {
-	newChapterFormOptions,
-	newChapterSchema
-} from "~/options/forms/new-chapter-options";
+import { newChapterSchema } from "~/options/forms/new-chapter-options";
 import { createNewChapter } from "~/server/actions/create-new-chapter";
 import { Button } from "~/shadcn/ui/button";
 import {
@@ -82,8 +79,6 @@ export function NewChapterDialog({
 	const [state, action] = useActionState(createNewChapter, initialFormState);
 
 	const form = useForm({
-		...newChapterFormOptions,
-
 		defaultValues: {
 			examinationSlug: examSlug,
 			subjectId: "",

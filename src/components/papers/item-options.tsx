@@ -18,10 +18,7 @@ import Form from "next/form";
 import Link from "next/link";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { z } from "zod";
-import {
-	updatePaperFormOptions,
-	updatePaperSchema
-} from "~/options/forms/update-paper-options";
+import { updatePaperSchema } from "~/options/forms/update-paper-options";
 import { updatePaperDetails } from "~/server/actions/update-paper";
 import type { GetPaperListItemType } from "~/server/fetchers/get-paper-list";
 import { Button } from "~/shadcn/ui/button";
@@ -77,8 +74,6 @@ export function PaperListItemOptions({
 	);
 
 	const form = useForm({
-		...updatePaperFormOptions,
-
 		defaultValues: {
 			paperId: paper.id,
 			examinationSlug,
@@ -86,10 +81,6 @@ export function PaperListItemOptions({
 			description: paper.description,
 			note: paper.note
 		} as z.infer<typeof updatePaperSchema>,
-
-		validators: {
-			onBlur: updatePaperSchema
-		},
 
 		transform: useTransform(
 			(baseForm) => mergeForm(baseForm, state!),

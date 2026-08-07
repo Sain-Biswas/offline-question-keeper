@@ -6,15 +6,21 @@ import {
 	useForm,
 	useTransform
 } from "@tanstack/react-form-nextjs";
-import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import {
-	newSubjectFormOptions,
-	newSubjectSchema
-} from "~/options/forms/new-subject-options";
+	CirclePlusIcon,
+	CircleXIcon,
+	LinkIcon,
+	NotepadTextIcon,
+	RotateCcwIcon
+} from "lucide-react";
+import Form from "next/form";
+import { useActionState, useEffect, useEffectEvent, useState } from "react";
+import { slugify } from "transliteration";
+import { z } from "zod";
+import { newSubjectSchema } from "~/options/forms/new-subject-options";
 import { createNewSubject } from "~/server/actions/create-new-subject";
 import type { GetPaperEntriesType } from "~/server/fetchers/get-paper-entries";
-import { z } from "zod";
-import { toast } from "~/shadcn/ui/toast";
+import { Button } from "~/shadcn/ui/button";
 import {
 	Dialog,
 	DialogClose,
@@ -25,15 +31,6 @@ import {
 	DialogTitle,
 	DialogTrigger
 } from "~/shadcn/ui/dialog";
-import { Button } from "~/shadcn/ui/button";
-import {
-	CirclePlusIcon,
-	CircleXIcon,
-	LinkIcon,
-	NotepadTextIcon,
-	RotateCcwIcon
-} from "lucide-react";
-import Form from "next/form";
 import {
 	Field,
 	FieldDescription,
@@ -43,21 +40,21 @@ import {
 } from "~/shadcn/ui/field";
 import { Input } from "~/shadcn/ui/input";
 import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue
-} from "~/shadcn/ui/select";
-import { slugify } from "transliteration";
-import {
 	InputGroup,
 	InputGroupAddon,
 	InputGroupInput,
 	InputGroupText,
 	InputGroupTextarea
 } from "~/shadcn/ui/input-group";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue
+} from "~/shadcn/ui/select";
 import { Spinner } from "~/shadcn/ui/spinner";
+import { toast } from "~/shadcn/ui/toast";
 
 interface NewSubjectDialogProps {
 	papers: GetPaperEntriesType;
@@ -70,8 +67,6 @@ export function NewSubjectDialog({ examSlug, papers }: NewSubjectDialogProps) {
 	const [state, action] = useActionState(createNewSubject, initialFormState);
 
 	const form = useForm({
-		...newSubjectFormOptions,
-
 		defaultValues: {
 			examinationSlug: examSlug,
 			paperId: "",

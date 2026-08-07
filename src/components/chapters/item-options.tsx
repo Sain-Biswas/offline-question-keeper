@@ -6,24 +6,6 @@ import {
 	useForm,
 	useTransform
 } from "@tanstack/react-form-nextjs";
-import { useActionState, useEffect, useEffectEvent, useState } from "react";
-import {
-	updateChapterFormOptions,
-	updateChapterSchema
-} from "~/options/forms/update-chapter-options";
-import { updateChapterDetails } from "~/server/actions/update-chapter";
-import type { GetChapterListType } from "~/server/fetchers/get-chapter-list";
-import { z } from "zod";
-import { toast } from "~/shadcn/ui/toast";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuPortal,
-	DropdownMenuShortcut,
-	DropdownMenuTrigger
-} from "~/shadcn/ui/dropdown-menu";
-import { Button } from "~/shadcn/ui/button";
 import {
 	CircleQuestionMarkIcon,
 	CircleXIcon,
@@ -32,7 +14,14 @@ import {
 	PencilSparklesIcon,
 	RotateCcwIcon
 } from "lucide-react";
+import Form from "next/form";
 import Link from "next/link";
+import { useActionState, useEffect, useEffectEvent, useState } from "react";
+import { z } from "zod";
+import { updateChapterSchema } from "~/options/forms/update-chapter-options";
+import { updateChapterDetails } from "~/server/actions/update-chapter";
+import type { GetChapterListType } from "~/server/fetchers/get-chapter-list";
+import { Button } from "~/shadcn/ui/button";
 import {
 	Dialog,
 	DialogClose,
@@ -43,7 +32,14 @@ import {
 	DialogPortal,
 	DialogTitle
 } from "~/shadcn/ui/dialog";
-import Form from "next/form";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuPortal,
+	DropdownMenuShortcut,
+	DropdownMenuTrigger
+} from "~/shadcn/ui/dropdown-menu";
 import {
 	Field,
 	FieldDescription,
@@ -59,6 +55,7 @@ import {
 	InputGroupTextarea
 } from "~/shadcn/ui/input-group";
 import { Spinner } from "~/shadcn/ui/spinner";
+import { toast } from "~/shadcn/ui/toast";
 
 interface ChapterListItemOptionsProps {
 	chapter: GetChapterListType[number];
@@ -77,8 +74,6 @@ export function ChapterListItemOptions({
 	);
 
 	const form = useForm({
-		...updateChapterFormOptions,
-
 		defaultValues: {
 			chapterId: chapter.id,
 			examinationSlug,

@@ -18,10 +18,7 @@ import Form from "next/form";
 import Link from "next/link";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { z } from "zod";
-import {
-	updateSubjectFormOptions,
-	updateSubjectSchema
-} from "~/options/forms/update-subject-options";
+import { updateSubjectSchema } from "~/options/forms/update-subject-options";
 import { updateSubjectDetails } from "~/server/actions/update-subject";
 import type { GetSubjectListType } from "~/server/fetchers/get-subject-list";
 import { Button } from "~/shadcn/ui/button";
@@ -77,8 +74,6 @@ export function SubjectListItemOptions({
 	);
 
 	const form = useForm({
-		...updateSubjectFormOptions,
-
 		defaultValues: {
 			subjectId: subject.id,
 			examinationSlug,

@@ -1,3 +1,5 @@
+"use server";
+
 import { database } from "~/server/database";
 
 interface GetPaperEntriesProps {

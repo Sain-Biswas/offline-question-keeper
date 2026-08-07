@@ -21,12 +21,9 @@ import Link from "next/link";
 import type { ChangeEvent } from "react";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { z } from "zod";
-import {
-	updateExaminationFormOptions,
-	updateExaminationSchema
-} from "~/options/forms/update-examination-options";
-import type { GetAllExaminationItemType } from "~/server/fetchers/get-all-examinations";
+import { updateExaminationSchema } from "~/options/forms/update-examination-options";
 import { updateExaminationDetails } from "~/server/actions/update-examination";
+import type { GetAllExaminationItemType } from "~/server/fetchers/get-all-examinations";
 import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";
 import { Button } from "~/shadcn/ui/button";
 import {
@@ -79,8 +76,6 @@ export function ExamItemOptions({
 	);
 
 	const form = useForm({
-		...updateExaminationFormOptions,
-
 		defaultValues: {
 			examinationId: examination.id,
 			name: examination.name,
@@ -88,10 +83,6 @@ export function ExamItemOptions({
 			isActive: examination.isActive ? "on" : undefined,
 			image: examination.image ?? ""
 		} as z.infer<typeof updateExaminationSchema>,
-
-		validators: {
-			onBlur: updateExaminationSchema
-		},
 
 		transform: useTransform(
 			(baseForm) => mergeForm(baseForm, state!),
