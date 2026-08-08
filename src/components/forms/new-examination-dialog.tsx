@@ -12,6 +12,7 @@ import {
 	LandmarkIcon,
 	SignatureIcon
 } from "lucide-react";
+import Form from "next/form";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { slugify } from "transliteration";
 import { useAppForm } from "~/integrations/tanstack/forms/app-form";
@@ -109,7 +110,7 @@ export function NewExaminationDialog() {
 					</DialogDescription>
 				</DialogHeader>
 
-				<form
+				<Form
 					action={action}
 					onSubmit={() => handleSubmit()}
 				>
@@ -193,7 +194,7 @@ export function NewExaminationDialog() {
 							</DialogFooter>
 						</FieldGroup>
 					</AppForm>
-				</form>
+				</Form>
 			</DialogContent>
 		</Dialog>
 	);

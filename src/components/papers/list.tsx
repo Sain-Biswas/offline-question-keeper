@@ -42,7 +42,7 @@ export async function PaperList({
 		<>
 			<section className="flex flex-col items-end gap-6 bg-card p-6 md:flex-row">
 				<Form
-					action={`/${examinationSlug}`}
+					action={`/examination/${examinationSlug}`}
 					className="flex w-full flex-col items-end gap-6 md:flex-row"
 				>
 					<Field
@@ -71,7 +71,7 @@ export async function PaperList({
 							key={examinationSlug}
 							nativeButton={false}
 							render={
-								<Link href={`/${examinationSlug}`}>
+								<Link href={`/examination/${examinationSlug}`}>
 									<RotateCwIcon />
 									Reset
 								</Link>

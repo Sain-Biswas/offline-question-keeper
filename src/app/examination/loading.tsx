@@ -4,11 +4,15 @@ import {
 	RotateCwIcon,
 	TextSearchIcon
 } from "lucide-react";
+import Form from "next/form";
+import Link from "next/link";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
+	BreadcrumbLink,
 	BreadcrumbList,
-	BreadcrumbPage
+	BreadcrumbPage,
+	BreadcrumbSeparator
 } from "~/shadcn/ui/breadcrumb";
 import { Button } from "~/shadcn/ui/button";
 import { Field, FieldLabel } from "~/shadcn/ui/field";
@@ -28,7 +32,13 @@ export default function IndexLoading() {
 				<Breadcrumb>
 					<BreadcrumbList>
 						<BreadcrumbItem>
-							<BreadcrumbPage>Home</BreadcrumbPage>
+							<BreadcrumbLink
+								render={<Link href="/">Home</Link>}
+							/>
+						</BreadcrumbItem>
+						<BreadcrumbSeparator />
+						<BreadcrumbItem>
+							<BreadcrumbPage>Examination</BreadcrumbPage>
 						</BreadcrumbItem>
 					</BreadcrumbList>
 				</Breadcrumb>
@@ -55,7 +65,7 @@ export default function IndexLoading() {
 				</section>
 
 				<section className="m-6 bg-card p-6">
-					<form
+					<Form
 						action="/"
 						className="flex flex-col flex-wrap items-center gap-6 md:flex-row"
 					>
@@ -104,7 +114,7 @@ export default function IndexLoading() {
 							<ListFilterIcon />
 							Filter
 						</Button>
-					</form>
+					</Form>
 				</section>
 
 				<ItemGroup className="my-6 px-6">

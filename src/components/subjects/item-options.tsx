@@ -129,7 +129,7 @@ export function SubjectListItemOptions({
 						<DropdownMenuItem
 							render={
 								<Link
-									href={`/${examinationSlug}/question?paper=${subject.paperSlug}&subject=${subject.slug}`}
+									href={`/examination/${examinationSlug}/question?paper=${subject.paperSlug}&subject=${subject.slug}`}
 								>
 									Questions
 									<DropdownMenuShortcut>

@@ -20,7 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/shadcn/ui/tabs";
 export default async function ExaminationPage({
 	params,
 	searchParams
-}: PageProps<"/[exam]">) {
+}: PageProps<"/examination/[exam]">) {
 	const { exam } = await params;
 
 	const param = await searchParams;
@@ -45,6 +45,14 @@ export default async function ExaminationPage({
 						<BreadcrumbItem>
 							<BreadcrumbLink
 								render={<Link href="/">Home</Link>}
+							/>
+						</BreadcrumbItem>
+						<BreadcrumbSeparator />
+						<BreadcrumbItem>
+							<BreadcrumbLink
+								render={
+									<Link href="/examination">Examination</Link>
+								}
 							/>
 						</BreadcrumbItem>
 						<BreadcrumbSeparator />

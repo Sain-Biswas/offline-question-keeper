@@ -5,6 +5,7 @@ import "~/app/globals.css";
 import { Toaster } from "~/shadcn/ui/toast";
 import { ThemeProvider } from "~/integrations/next-themes/theme-provider";
 import { TanstackDevtoolsProvider } from "~/integrations/tanstack/devtools/provider";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 const spaceGrotesk = Space_Grotesk({
 	subsets: ["latin"],
@@ -33,15 +34,17 @@ export default function RootLayout({
 			suppressHydrationWarning
 		>
 			<body>
-				<ThemeProvider
-					attribute="class"
-					defaultTheme="system"
-					enableSystem
-				>
-					{children}
-					<Toaster />
-					<TanstackDevtoolsProvider />
-				</ThemeProvider>
+				<NuqsAdapter>
+					<ThemeProvider
+						attribute="class"
+						defaultTheme="system"
+						enableSystem
+					>
+						{children}
+						<Toaster />
+						<TanstackDevtoolsProvider />
+					</ThemeProvider>
+				</NuqsAdapter>
 			</body>
 		</html>
 	);

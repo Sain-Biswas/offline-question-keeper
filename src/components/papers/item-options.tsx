@@ -128,7 +128,7 @@ export function PaperListItemOptions({
 						<DropdownMenuItem
 							render={
 								<Link
-									href={`/${examinationSlug}/question?paper=${paper.slug}`}
+									href={`/examination/${examinationSlug}/question?paper=${paper.slug}`}
 								>
 									Questions
 									<DropdownMenuShortcut>

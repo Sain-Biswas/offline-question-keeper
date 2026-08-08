@@ -129,7 +129,7 @@ export function ChapterListItemOptions({
 						<DropdownMenuItem
 							render={
 								<Link
-									href={`/${examinationSlug}/question?paper=${chapter.paperSlug}&subject=${chapter.subjectSlug}&chapter=${chapter.slug}`}
+									href={`/examination/${examinationSlug}/question?paper=${chapter.paperSlug}&subject=${chapter.subjectSlug}&chapter=${chapter.slug}`}
 								>
 									Questions
 									<DropdownMenuShortcut>

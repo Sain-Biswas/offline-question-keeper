@@ -1,5 +1,7 @@
+import { ExaminationItemOptions } from "~/components/examinations/examination-item-options";
 import { cn } from "~/lib/utils";
-import type { GetAllExaminationItemType } from "~/server/fetchers/get-all-examinations";
+import type { FetchExaminationListType } from "~/server/fetchers/fetch-examination-list";
+import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";
 import {
 	Item,
 	ItemActions,
@@ -10,15 +12,13 @@ import {
 	ItemMedia,
 	ItemTitle
 } from "~/shadcn/ui/item";
-import { ExamItemOptions } from "~/components/examinations/exam-item-options";
-import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";
 import { Skeleton } from "~/shadcn/ui/skeleton";
 
-export function ExaminationItem({
-	examination
-}: {
-	examination: GetAllExaminationItemType;
-}) {
+interface ExaminationItemProps {
+	examination: FetchExaminationListType[number];
+}
+
+export function ExaminationItem({ examination }: ExaminationItemProps) {
 	return (
 		<Item
 			key={examination.id}
@@ -53,9 +53,29 @@ export function ExaminationItem({
 				</ItemDescription>
 			</ItemContent>
 			<ItemActions>
-				<ExamItemOptions examination={examination} />
+				<ExaminationItemOptions examination={examination} />
 			</ItemActions>
 			<ItemFooter className="flex-col">
+				<div className="flex w-full flex-wrap justify-start gap-x-6 font-bold uppercase">
+					<p>
+						<span className="mr-2 text-muted-foreground">
+							Papers
+						</span>{" "}
+						{examination.paperCount}
+					</p>
+					<p>
+						<span className="mr-2 text-muted-foreground">
+							Subjects
+						</span>{" "}
+						{examination.subjectCount}
+					</p>
+					<p>
+						<span className="mr-2 text-muted-foreground">
+							Chapters
+						</span>{" "}
+						{examination.chapterCount}
+					</p>
+				</div>
 				<div
 					className={cn(
 						"w-full bg-linear-to-r from-transparent via-transparent via-30% font-extrabold uppercase",

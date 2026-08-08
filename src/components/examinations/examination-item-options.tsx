@@ -19,7 +19,7 @@ import { z } from "zod";
 import { useAppForm } from "~/integrations/tanstack/forms/app-form";
 import { updateExaminationSchema } from "~/options/forms/update-examination-options";
 import { updateExaminationDetails } from "~/server/actions/update-examination";
-import type { GetAllExaminationItemType } from "~/server/fetchers/get-all-examinations";
+import type { FetchExaminationListType } from "~/server/fetchers/fetch-examination-list";
 import { Button } from "~/shadcn/ui/button";
 import {
 	Dialog,
@@ -42,11 +42,16 @@ import {
 import { FieldGroup } from "~/shadcn/ui/field";
 import { toast } from "~/shadcn/ui/toast";
 
-export function ExamItemOptions({
+interface ExaminationItemOptionsProps {
+	examination: Omit<
+		FetchExaminationListType[number],
+		"paperCount" | "subjectCount" | "chapterCount"
+	>;
+}
+
+export function ExaminationItemOptions({
 	examination
-}: {
-	examination: GetAllExaminationItemType;
-}) {
+}: ExaminationItemOptionsProps) {
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
 
 	const [state, action] = useActionState(
@@ -122,7 +127,7 @@ export function ExamItemOptions({
 
 				<DropdownMenuPortal>
 					<DropdownMenuContent>
-						<Link href={`/${examination.slug}`}>
+						<Link href={`/examination/${examination.slug}`}>
 							<DropdownMenuItem>
 								Open
 								<DropdownMenuShortcut>

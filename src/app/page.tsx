@@ -1,14 +1,4 @@
-import {
-	LandmarkIcon,
-	ListFilterIcon,
-	RotateCwIcon,
-	TextSearchIcon
-} from "lucide-react";
-import Form from "next/form";
 import Link from "next/link";
-import { ExaminationItem } from "~/components/examinations/exam-item";
-import { NewExaminationDialog } from "~/components/forms/new-examination-dialog";
-import { getAllExamination } from "~/server/fetchers/get-all-examinations";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -16,53 +6,8 @@ import {
 	BreadcrumbPage
 } from "~/shadcn/ui/breadcrumb";
 import { Button } from "~/shadcn/ui/button";
-import {
-	Combobox,
-	ComboboxContent,
-	ComboboxEmpty,
-	ComboboxItem,
-	ComboboxList,
-	ComboboxTrigger,
-	ComboboxValue
-} from "~/shadcn/ui/combobox";
-import {
-	Empty,
-	EmptyDescription,
-	EmptyHeader,
-	EmptyMedia,
-	EmptyTitle
-} from "~/shadcn/ui/empty";
-import { Field, FieldLabel } from "~/shadcn/ui/field";
-import {
-	InputGroup,
-	InputGroupAddon,
-	InputGroupInput
-} from "~/shadcn/ui/input-group";
-import { ItemGroup } from "~/shadcn/ui/item";
 
-const currentStatus = [
-	{
-		label: "All",
-		value: ""
-	},
-	{
-		label: "Preparing",
-		value: "on"
-	},
-	{
-		label: "Not Preparing",
-		value: "off"
-	}
-] as const;
-
-export default async function IndexPage({ searchParams }: PageProps<"/">) {
-	const params = await searchParams;
-
-	const search = (params["search"] as string) || "";
-	const status = (params["status"] as string) || "";
-
-	const examinations = await getAllExamination({ search, status });
-
+export default async function HomePage() {
 	return (
 		<>
 			<header className="m-6 flex items-center justify-between">
@@ -75,134 +20,12 @@ export default async function IndexPage({ searchParams }: PageProps<"/">) {
 				</Breadcrumb>
 			</header>
 			<main>
-				<section className="m-6 flex flex-wrap items-center justify-between gap-6">
-					<article>
-						<h1 className="text-xl/loose font-extrabold uppercase">
-							Examinations
-						</h1>
-						<p className="text-sm/relaxed font-medium text-muted-foreground">
-							List of all examinations added by the user for
-							preparation.
-						</p>
-					</article>
-
-					<NewExaminationDialog />
-				</section>
-
-				<section className="m-6 bg-card p-6">
-					<Form
-						action="/"
-						className="flex flex-col flex-wrap items-end gap-6 md:flex-row"
-					>
-						<Field
-							className="mr-auto w-full gap-0 md:max-w-72"
-							key={`search:${search}`}
-						>
-							<FieldLabel>Search for Examination</FieldLabel>
-							<InputGroup>
-								<InputGroupInput
-									name="search"
-									key="search"
-									autoComplete="off"
-									placeholder="Search for name and description"
-									defaultValue={search}
-								/>
-								<InputGroupAddon align="inline-start">
-									<TextSearchIcon />
-								</InputGroupAddon>
-							</InputGroup>
-						</Field>
-
-						<Field
-							className="w-full gap-0 md:max-w-40"
-							defaultValue={status}
-							key={`status:${status}`}
-						>
-							<FieldLabel>Current Status</FieldLabel>
-							<Combobox
-								items={currentStatus}
-								defaultValue={status}
-								name="status"
-							>
-								<ComboboxTrigger
-									render={
-										<Button
-											variant="outline"
-											className="md:w-fill w-full"
-										>
-											<ComboboxValue />
-										</Button>
-									}
-								/>
-
-								<ComboboxContent>
-									<ComboboxEmpty>
-										No status available
-									</ComboboxEmpty>
-									<ComboboxList>
-										{currentStatus.map((item) => (
-											<ComboboxItem
-												key={item.value}
-												value={item.value}
-											>
-												{item.label}
-											</ComboboxItem>
-										))}
-									</ComboboxList>
-								</ComboboxContent>
-							</Combobox>
-						</Field>
-
-						{(search || status) && (
-							<Button
-								type="reset"
-								variant="destructive"
-								className="w-full md:w-fit"
-								nativeButton={false}
-								render={
-									<Link href="/">
-										<RotateCwIcon />
-										Reset
-									</Link>
-								}
-							/>
-						)}
-
-						<Button
-							type="submit"
-							className="w-full md:w-fit"
-						>
-							<ListFilterIcon />
-							Filter
-						</Button>
-					</Form>
-				</section>
-
-				{examinations.length === 0 && (
-					<Empty>
-						<EmptyHeader>
-							<EmptyMedia variant="icon">
-								<LandmarkIcon />
-							</EmptyMedia>
-
-							<EmptyTitle>No Examinations to show</EmptyTitle>
-
-							<EmptyDescription>
-								Add new examinations or try changing the filters
-								applied.
-							</EmptyDescription>
-						</EmptyHeader>
-					</Empty>
-				)}
-
-				<ItemGroup className="my-6 px-6">
-					{examinations.map((exam) => (
-						<ExaminationItem
-							key={exam.id}
-							examination={exam}
-						/>
-					))}
-				</ItemGroup>
+				<Button
+					variant="link"
+					size="lg"
+					nativeButton={false}
+					render={<Link href="/examination">Examination</Link>}
+				/>
 			</main>
 		</>
 	);

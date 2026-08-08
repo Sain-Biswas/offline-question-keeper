@@ -38,6 +38,14 @@ export default function ExaminationLoadingPage() {
 						</BreadcrumbItem>
 						<BreadcrumbSeparator />
 						<BreadcrumbItem>
+							<BreadcrumbLink
+								render={
+									<Link href="/examination">Examination</Link>
+								}
+							/>
+						</BreadcrumbItem>
+						<BreadcrumbSeparator />
+						<BreadcrumbItem>
 							<Skeleton className="h-4 w-40 rounded" />
 						</BreadcrumbItem>
 					</BreadcrumbList>

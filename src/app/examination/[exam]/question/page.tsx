@@ -10,10 +10,10 @@ import {
 	BreadcrumbSeparator
 } from "~/shadcn/ui/breadcrumb";
 
-export default async function QuestionPage({
+export default async function ExaminationQuestionPage({
 	params,
 	searchParams
-}: PageProps<"/[exam]/question">) {
+}: PageProps<"/examination/[exam]/question">) {
 	const { exam } = await params;
 	const param = await searchParams;
 
@@ -39,7 +39,17 @@ export default async function QuestionPage({
 						<BreadcrumbItem>
 							<BreadcrumbLink
 								render={
-									<Link href={`/${examination.slug}`}>
+									<Link href="/examination">Examination</Link>
+								}
+							/>
+						</BreadcrumbItem>
+						<BreadcrumbSeparator />
+						<BreadcrumbItem>
+							<BreadcrumbLink
+								render={
+									<Link
+										href={`/examination/${examination.slug}`}
+									>
 										{examination.name}
 									</Link>
 								}

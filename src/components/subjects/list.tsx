@@ -57,7 +57,7 @@ export async function SubjectList({
 		<>
 			<section className="flex flex-col flex-wrap items-end gap-6 bg-card p-6 md:flex-row">
 				<Form
-					action={`/${examinationSlug}`}
+					action={`/examination/${examinationSlug}`}
 					id="form-subject-filters"
 					className="mr-auto flex w-full grow flex-col items-end gap-6 md:flex-row lg:w-fit"
 				>
@@ -122,7 +122,7 @@ export async function SubjectList({
 						key={examinationSlug}
 						nativeButton={false}
 						render={
-							<Link href={`/${examinationSlug}`}>
+							<Link href={`/examination/${examinationSlug}`}>
 								<RotateCwIcon />
 								Reset
 							</Link>
