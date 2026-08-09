@@ -19,7 +19,7 @@ import { z } from "zod";
 import { useAppForm } from "~/integrations/tanstack/forms/app-form";
 import { updatePaperSchema } from "~/options/forms/update-paper-options";
 import { updatePaperDetails } from "~/server/actions/update-paper";
-import type { GetPaperListItemType } from "~/server/fetchers/get-paper-list";
+import type { FetchPaperListType } from "~/server/fetchers/fetch-paper-list";
 import { Button } from "~/shadcn/ui/button";
 import {
 	Dialog,
@@ -43,7 +43,7 @@ import { FieldGroup } from "~/shadcn/ui/field";
 import { toast } from "~/shadcn/ui/toast";
 
 interface PaperListItemOptionsProps {
-	paper: GetPaperListItemType;
+	paper: FetchPaperListType[number];
 	examinationSlug: string;
 }
 

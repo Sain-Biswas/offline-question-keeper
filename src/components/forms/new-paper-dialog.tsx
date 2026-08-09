@@ -99,7 +99,10 @@ export function NewPaperDialog({ examinationId }: NewPaperDialogProps) {
 		>
 			<DialogTrigger
 				render={
-					<Button className="w-full md:w-fit">
+					<Button
+						className="w-full md:w-fit"
+						size="lg"
+					>
 						<CirclePlusIcon />
 						Add New Paper
 					</Button>

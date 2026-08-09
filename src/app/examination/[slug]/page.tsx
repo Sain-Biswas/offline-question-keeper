@@ -1,11 +1,16 @@
 import { ComponentIcon, LogsIcon, NotepadTextIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { createSearchParamsCache, parseAsString } from "nuqs/server";
 import { ChapterList } from "~/components/chapters/list";
-import { PaperList } from "~/components/papers/list";
+import { NewPaperDialog } from "~/components/forms/new-paper-dialog";
+import { PaperListItem } from "~/components/papers/item";
+import { PaperListFilters } from "~/components/papers/list-filters";
 import { SubjectList } from "~/components/subjects/list";
-import { getExaminationDetails } from "~/server/fetchers/get-examination-details";
+import { fetchExaminationDetails } from "~/server/fetchers/fetch-examination-details";
+import { fetchPaperList } from "~/server/fetchers/fetch-paper-list";
 import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";
+import { Badge } from "~/shadcn/ui/badge";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -14,18 +19,34 @@ import {
 	BreadcrumbPage,
 	BreadcrumbSeparator
 } from "~/shadcn/ui/breadcrumb";
+import {
+	Empty,
+	EmptyDescription,
+	EmptyHeader,
+	EmptyMedia,
+	EmptyTitle
+} from "~/shadcn/ui/empty";
+import { ItemGroup } from "~/shadcn/ui/item";
 import { Skeleton } from "~/shadcn/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "~/shadcn/ui/tabs";
+
+const searchParamCache = createSearchParamsCache({
+	paperQ: parseAsString.withDefault("")
+});
 
 export default async function ExaminationPage({
 	params,
 	searchParams
-}: PageProps<"/examination/[exam]">) {
-	const { exam } = await params;
+}: PageProps<"/examination/[slug]">) {
+	const { slug } = await params;
+
+	const examination = await fetchExaminationDetails({ slug });
+	if (!examination) notFound();
+
+	const { paperQ } = await searchParamCache.parse(searchParams);
 
 	const param = await searchParams;
 
-	const paperSearch = (param["paperSearch"] as string | undefined) || "";
 	const subjectSearch = (param["subjectSearch"] as string | undefined) || "";
 	const chapterSearch = (param["chapterSearch"] as string | undefined) || "";
 
@@ -33,9 +54,12 @@ export default async function ExaminationPage({
 	const searchSubject =
 		(param["searchSubject"] as string | undefined) || "all";
 
-	const examination = await getExaminationDetails({ slug: exam });
-
-	if (!examination) notFound();
+	const [papers] = await Promise.all([
+		fetchPaperList({
+			examination: examination.id,
+			q: paperQ
+		})
+	]);
 
 	return (
 		<>
@@ -64,15 +88,15 @@ export default async function ExaminationPage({
 			</header>
 			<main>
 				<section className="m-6 flex flex-col items-center gap-6 md:flex-row">
-					<Avatar className="size-30 rounded-none after:content-none">
+					<Avatar className="size-36 rounded-none after:content-none">
 						<AvatarImage
 							src={examination.image ?? null}
 							alt={examination.code}
-							className="size-30 rounded-none object-contain!"
+							className="size-36 rounded-none object-contain!"
 						/>
 						<AvatarFallback
 							render={<Skeleton />}
-							className="size-30 rounded-none"
+							className="size-36 rounded-none"
 						/>
 					</Avatar>
 					<article className="w-full text-center md:text-left">
@@ -84,6 +108,17 @@ export default async function ExaminationPage({
 								{examination.code}
 							</h3>
 						</div>
+						{examination.isActive ?
+							<Badge className="bg-chart-1/10 px-4 py-1 text-xs font-extrabold text-chart-1">
+								Preparing
+							</Badge>
+						:	<Badge
+								variant="destructive"
+								className="bg-destructive/10 px-4 py-1 text-xs font-extrabold"
+							>
+								Not Preparing
+							</Badge>
+						}
 						<p className="text-base/relaxed font-medium whitespace-pre-wrap text-muted-foreground">
 							{examination.description}
 						</p>
@@ -95,19 +130,37 @@ export default async function ExaminationPage({
 					className="m-0 sm:m-6"
 				>
 					<TabsList variant="line">
-						<TabsTrigger value="papers">
+						<TabsTrigger
+							value="papers"
+							className="items-center gap-3"
+						>
 							<NotepadTextIcon />
-							Papers
+							Papers{" "}
+							<Badge className="text-xs font-extrabold text-chart-1">
+								{examination.paperCount}
+							</Badge>
 						</TabsTrigger>
 
-						<TabsTrigger value="subjects">
+						<TabsTrigger
+							value="subjects"
+							className="items-center gap-3"
+						>
 							<ComponentIcon />
-							Subjects
+							Subjects{" "}
+							<Badge className="text-xs font-extrabold text-chart-1">
+								{examination.subjectCount}
+							</Badge>
 						</TabsTrigger>
 
-						<TabsTrigger value="chapters">
+						<TabsTrigger
+							value="chapters"
+							className="items-center gap-3"
+						>
 							<LogsIcon />
-							Chapters
+							Chapters{" "}
+							<Badge className="text-xs font-extrabold text-chart-1">
+								{examination.chapterCount}
+							</Badge>
 						</TabsTrigger>
 					</TabsList>
 
@@ -115,11 +168,37 @@ export default async function ExaminationPage({
 						value="papers"
 						className="m-6 sm:mx-0"
 					>
-						<PaperList
-							examinationSlug={examination.slug}
-							examinationId={examination.id}
-							search={paperSearch}
-						/>
+						<section className="flex flex-col items-end gap-6 bg-card p-6 md:flex-row">
+							<PaperListFilters />
+							<NewPaperDialog examinationId={examination.id} />
+						</section>
+
+						{papers.length === 0 && (
+							<Empty>
+								<EmptyHeader>
+									<EmptyMedia variant="icon">
+										<NotepadTextIcon />
+									</EmptyMedia>
+
+									<EmptyTitle>No Papers to show</EmptyTitle>
+
+									<EmptyDescription>
+										Add new papers or try changing the
+										filters applied.
+									</EmptyDescription>
+								</EmptyHeader>
+							</Empty>
+						)}
+
+						<ItemGroup className="my-6">
+							{papers.map((paper) => (
+								<PaperListItem
+									examinationSlug={examination.slug}
+									paper={paper}
+									key={paper.id}
+								/>
+							))}
+						</ItemGroup>
 					</TabsContent>
 
 					<TabsContent

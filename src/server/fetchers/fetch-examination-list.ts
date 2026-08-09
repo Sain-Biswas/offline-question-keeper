@@ -54,7 +54,7 @@ export async function fetchExaminationList({
 
 			chapterCount: (t, { sql }) =>
 				sql<number>`(
-        SELECT COUNT(${examinationReferenceView.chapterId}) 
+        SELECT COUNT(DISTINCT ${examinationReferenceView.chapterId}) 
         FROM ${examinationReferenceView} 
         WHERE ${examinationReferenceView.examinationId} = ${t.id}
       )`.as("chapter_count")

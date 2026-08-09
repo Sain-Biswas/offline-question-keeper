@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getExaminationDetails } from "~/server/fetchers/get-examination-details";
+import { fetchExaminationDetails } from "~/server/fetchers/fetch-examination-details";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -13,17 +13,17 @@ import {
 export default async function ExaminationQuestionPage({
 	params,
 	searchParams
-}: PageProps<"/examination/[exam]/question">) {
-	const { exam } = await params;
-	const param = await searchParams;
+}: PageProps<"/examination/[slug]">) {
+	const { slug } = await params;
 
-	const examination = await getExaminationDetails({ slug: exam });
+	const examination = await fetchExaminationDetails({ slug });
+	if (!examination) notFound();
+
+	const param = await searchParams;
 
 	const paper = (param["paper"] as string | undefined) ?? "";
 	const subject = (param["subject"] as string | undefined) ?? "";
 	const chapter = (param["chapter"] as string | undefined) ?? "";
-
-	if (!examination) notFound();
 
 	return (
 		<>

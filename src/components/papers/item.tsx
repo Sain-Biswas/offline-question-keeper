@@ -1,4 +1,4 @@
-import type { GetPaperListItemType } from "~/server/fetchers/get-paper-list";
+import type { FetchPaperListType } from "~/server/fetchers/fetch-paper-list";
 import {
 	Item,
 	ItemActions,
@@ -10,7 +10,7 @@ import {
 import { PaperListItemOptions } from "./item-options";
 
 interface PaperListItemProps {
-	paper: GetPaperListItemType;
+	paper: FetchPaperListType[number];
 	examinationSlug: string;
 }
 
@@ -39,9 +39,9 @@ export function PaperListItem({ paper, examinationSlug }: PaperListItemProps) {
 			</ItemActions>
 			<ItemFooter className="justify-start text-xs/relaxed font-extrabold uppercase">
 				<span className="text-muted-foreground">Subjects</span>{" "}
-				{paper.subjects}{" "}
+				{paper.subjectCount}{" "}
 				<span className="ml-4 text-muted-foreground">Chapters</span>{" "}
-				{paper.chapters}
+				{paper.chapterCount}
 			</ItemFooter>
 		</Item>
 	);
