@@ -1,4 +1,4 @@
-import type { GetSubjectListType } from "~/server/fetchers/get-subject-list";
+import type { FetchSubjectListType } from "~/server/fetchers/fetch-subject-list";
 import {
 	Item,
 	ItemActions,
@@ -11,21 +11,17 @@ import {
 import { SubjectListItemOptions } from "./item-options";
 
 interface SubjectListItemProps {
-	subject: GetSubjectListType[number];
-	examinationSlug: string;
+	subject: FetchSubjectListType["subjects"][number];
 }
 
-export function SubjectListItem({
-	examinationSlug,
-	subject
-}: SubjectListItemProps) {
+export function SubjectListItem({ subject }: SubjectListItemProps) {
 	return (
 		<Item
 			className="bg-card"
 			aria-label={subject.name}
 		>
 			<ItemHeader className="text-xs font-extrabold uppercase">
-				{subject.paperName}
+				{subject.paper}
 			</ItemHeader>
 			<ItemContent className="gap-0">
 				<ItemTitle className="mb-1 text-xl/relaxed">
@@ -40,7 +36,6 @@ export function SubjectListItem({
 			</ItemContent>
 			<ItemActions>
 				<SubjectListItemOptions
-					examinationSlug={examinationSlug}
 					subject={subject}
 					key={`Menu: ${subject.id}`}
 				/>

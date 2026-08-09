@@ -7,6 +7,7 @@ import {
 	throttle,
 	useQueryStates
 } from "nuqs";
+import { useMemo } from "react";
 import { Button } from "~/shadcn/ui/button";
 import {
 	Combobox,
@@ -55,9 +56,10 @@ export function ExaminationListFilters() {
 		}
 	);
 
-	// Find current selected item object based on status string
-	const selectedStatusItem =
-		items.find((item) => item.value === status) ?? items[0];
+	const selectedStatusItem = useMemo(
+		() => items.find((item) => item.value === status) ?? items[0],
+		[status]
+	);
 
 	return (
 		<section className="m-6 flex flex-col gap-6 bg-card p-6 sm:flex-row sm:items-end">

@@ -18,7 +18,7 @@ import { z } from "zod";
 import { useAppForm } from "~/integrations/tanstack/forms/app-form";
 import { newSubjectSchema } from "~/options/forms/new-subject-options";
 import { createNewSubject } from "~/server/actions/create-new-subject";
-import type { GetPaperEntriesType } from "~/server/fetchers/get-paper-entries";
+import type { FetchSubjectListType } from "~/server/fetchers/fetch-subject-list";
 import { Button } from "~/shadcn/ui/button";
 import {
 	Dialog,
@@ -34,7 +34,7 @@ import { FieldDescription, FieldGroup } from "~/shadcn/ui/field";
 import { toast } from "~/shadcn/ui/toast";
 
 interface NewSubjectDialogProps {
-	papers: GetPaperEntriesType;
+	papers: FetchSubjectListType["paperEntries"];
 }
 
 export function NewSubjectDialog({ papers }: NewSubjectDialogProps) {
@@ -100,7 +100,10 @@ export function NewSubjectDialog({ papers }: NewSubjectDialogProps) {
 		>
 			<DialogTrigger
 				render={
-					<Button className="w-full md:w-fit">
+					<Button
+						className="w-full md:w-fit"
+						size="lg"
+					>
 						<CirclePlusIcon />
 						Add Subject Paper
 					</Button>

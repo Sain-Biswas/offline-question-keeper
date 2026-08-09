@@ -92,5 +92,27 @@ export const relations = defineRelations(schema, (relation) => ({
 			from: relation.chapterTable.subjectId,
 			to: relation.subjectTable.id
 		})
+	},
+
+	examinationReferenceView: {
+		examinations: relation.one.examinationTable({
+			from: relation.examinationReferenceView.examinationId,
+			to: relation.examinationTable.id
+		}),
+
+		papers: relation.one.paperTable({
+			from: relation.examinationReferenceView.paperId,
+			to: relation.paperTable.id
+		}),
+
+		subjects: relation.one.subjectTable({
+			from: relation.examinationReferenceView.subjectId,
+			to: relation.subjectTable.id
+		}),
+
+		chapters: relation.one.chapterTable({
+			from: relation.examinationReferenceView.chapterId,
+			to: relation.chapterTable.id
+		})
 	}
 }));

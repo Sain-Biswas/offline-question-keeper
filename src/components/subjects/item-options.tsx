@@ -14,12 +14,13 @@ import {
 } from "lucide-react";
 import Form from "next/form";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { z } from "zod";
 import { useAppForm } from "~/integrations/tanstack/forms/app-form";
 import { updateSubjectSchema } from "~/options/forms/update-subject-options";
 import { updateSubjectDetails } from "~/server/actions/update-subject";
-import type { GetSubjectListType } from "~/server/fetchers/get-subject-list";
+import type { FetchSubjectListType } from "~/server/fetchers/fetch-subject-list";
 import { Button } from "~/shadcn/ui/button";
 import {
 	Dialog,
@@ -43,15 +44,15 @@ import { FieldGroup } from "~/shadcn/ui/field";
 import { toast } from "~/shadcn/ui/toast";
 
 interface SubjectListItemOptionsProps {
-	subject: GetSubjectListType[number];
-	examinationSlug: string;
+	subject: FetchSubjectListType["subjects"][number];
 }
 
 export function SubjectListItemOptions({
-	examinationSlug,
 	subject
 }: SubjectListItemOptionsProps) {
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
+
+	const { slug } = useParams<{ slug: string }>();
 
 	const [state, action] = useActionState(
 		updateSubjectDetails,
@@ -129,7 +130,7 @@ export function SubjectListItemOptions({
 						<DropdownMenuItem
 							render={
 								<Link
-									href={`/examination/${examinationSlug}/question?paper=${subject.paperSlug}&subject=${subject.slug}`}
+									href={`/examination/${slug}/question?paper=${subject.paperSlug}&subject=${subject.slug}`}
 								>
 									Questions
 									<DropdownMenuShortcut>
@@ -214,11 +215,8 @@ export function SubjectListItemOptions({
 												<Button
 													type="button"
 													variant="outline"
-													onClick={(event) => {
-														event.preventDefault();
-														event.stopPropagation();
-														reset();
-													}}
+													key="form-dialog-subject-cancel"
+													onClick={() => reset()}
 												>
 													<CircleXIcon />
 													Cancel
