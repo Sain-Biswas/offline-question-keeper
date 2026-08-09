@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Form from "next/form";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { z } from "zod";
 import { useAppForm } from "~/integrations/tanstack/forms/app-form";
@@ -44,14 +45,12 @@ import { toast } from "~/shadcn/ui/toast";
 
 interface PaperListItemOptionsProps {
 	paper: FetchPaperListType[number];
-	examinationSlug: string;
 }
 
-export function PaperListItemOptions({
-	paper,
-	examinationSlug
-}: PaperListItemOptionsProps) {
+export function PaperListItemOptions({ paper }: PaperListItemOptionsProps) {
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
+
+	const { slug } = useParams<{ slug: string }>();
 
 	const [state, action] = useActionState(
 		updatePaperDetails,
@@ -128,7 +127,7 @@ export function PaperListItemOptions({
 						<DropdownMenuItem
 							render={
 								<Link
-									href={`/examination/${examinationSlug}/question?paper=${paper.slug}`}
+									href={`/examination/${slug}/question?paper=${paper.slug}`}
 								>
 									Questions
 									<DropdownMenuShortcut>

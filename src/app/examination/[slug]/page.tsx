@@ -193,7 +193,6 @@ export default async function ExaminationPage({
 						<ItemGroup className="my-6">
 							{papers.map((paper) => (
 								<PaperListItem
-									examinationSlug={examination.slug}
 									paper={paper}
 									key={paper.id}
 								/>

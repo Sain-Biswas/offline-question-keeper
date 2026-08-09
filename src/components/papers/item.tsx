@@ -11,10 +11,9 @@ import { PaperListItemOptions } from "./item-options";
 
 interface PaperListItemProps {
 	paper: FetchPaperListType[number];
-	examinationSlug: string;
 }
 
-export function PaperListItem({ paper, examinationSlug }: PaperListItemProps) {
+export function PaperListItem({ paper }: PaperListItemProps) {
 	return (
 		<Item
 			className="bg-card"
@@ -32,10 +31,7 @@ export function PaperListItem({ paper, examinationSlug }: PaperListItemProps) {
 				</ItemDescription>
 			</ItemContent>
 			<ItemActions>
-				<PaperListItemOptions
-					examinationSlug={examinationSlug}
-					paper={paper}
-				/>
+				<PaperListItemOptions paper={paper} />
 			</ItemActions>
 			<ItemFooter className="justify-start text-xs/relaxed font-extrabold uppercase">
 				<span className="text-muted-foreground">Subjects</span>{" "}
