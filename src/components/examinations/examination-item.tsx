@@ -22,8 +22,8 @@ export function ExaminationItem({ examination }: ExaminationItemProps) {
 	return (
 		<Item
 			key={examination.id}
-			variant="muted"
 			aria-label={examination.name}
+			className="bg-card"
 		>
 			<ItemHeader className="text-base/loose font-medium">
 				{examination.name}

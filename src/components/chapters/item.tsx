@@ -22,7 +22,7 @@ export function ChapterListItem({
 }: ChapterListItemProps) {
 	return (
 		<Item
-			variant="muted"
+			className="bg-card"
 			aria-label={chapter.name}
 		>
 			<ItemHeader className="flex-wrap justify-start gap-0 text-xs font-extrabold uppercase">

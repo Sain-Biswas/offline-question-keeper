@@ -1,10 +1,4 @@
-import {
-	CirclePlusIcon,
-	ListFilterIcon,
-	RotateCwIcon,
-	TextSearchIcon
-} from "lucide-react";
-import Form from "next/form";
+import { CirclePlusIcon, TargetIcon } from "lucide-react";
 import Link from "next/link";
 import {
 	Breadcrumb,
@@ -15,6 +9,7 @@ import {
 	BreadcrumbSeparator
 } from "~/shadcn/ui/breadcrumb";
 import { Button } from "~/shadcn/ui/button";
+import { Combobox, ComboboxInput } from "~/shadcn/ui/combobox";
 import { Field, FieldLabel } from "~/shadcn/ui/field";
 import {
 	InputGroup,
@@ -22,7 +17,6 @@ import {
 	InputGroupInput
 } from "~/shadcn/ui/input-group";
 import { ItemGroup } from "~/shadcn/ui/item";
-import { Select, SelectTrigger, SelectValue } from "~/shadcn/ui/select";
 import { Skeleton } from "~/shadcn/ui/skeleton";
 
 export default function IndexLoading() {
@@ -64,57 +58,32 @@ export default function IndexLoading() {
 					</Button>
 				</section>
 
-				<section className="m-6 bg-card p-6">
-					<Form
-						action="/"
-						className="flex flex-col flex-wrap items-center gap-6 md:flex-row"
-					>
-						<Field className="mr-auto w-full gap-0 md:max-w-72">
-							<FieldLabel>Search for Examination</FieldLabel>
-							<InputGroup>
-								<InputGroupInput
-									name="search"
-									disabled
-									placeholder="Search for name and description"
-								/>
-								<InputGroupAddon align="inline-start">
-									<TextSearchIcon />
+				<section className="m-6 flex flex-col gap-6 bg-card p-6 sm:flex-row sm:items-end">
+					<Field className="w-full gap-0 sm:max-w-80">
+						<FieldLabel>Search for Examination</FieldLabel>
+						<InputGroup>
+							<InputGroupInput
+								type="text"
+								disabled
+								placeholder="Search..."
+								autoComplete="off"
+							/>
+						</InputGroup>
+					</Field>
+
+					<Field className="mr-auto w-full gap-0 sm:max-w-40">
+						<FieldLabel>Current Status</FieldLabel>
+						<Combobox>
+							<ComboboxInput
+								placeholder="All"
+								disabled
+							>
+								<InputGroupAddon>
+									<TargetIcon />
 								</InputGroupAddon>
-							</InputGroup>
-						</Field>
-
-						<Field className="w-full gap-0 md:max-w-48">
-							<FieldLabel>Current Status</FieldLabel>
-							<Select name="status">
-								<SelectTrigger
-									disabled
-									className="w-full md:max-w-48"
-								>
-									<SelectValue placeholder="All" />
-								</SelectTrigger>
-							</Select>
-						</Field>
-
-						<Button
-							type="reset"
-							size="lg"
-							disabled
-							variant="destructive"
-							className="w-full md:w-fit"
-						>
-							<RotateCwIcon />
-							Reset
-						</Button>
-						<Button
-							type="submit"
-							size="lg"
-							className="w-full md:w-fit"
-							disabled
-						>
-							<ListFilterIcon />
-							Filter
-						</Button>
-					</Form>
+							</ComboboxInput>
+						</Combobox>
+					</Field>
 				</section>
 
 				<ItemGroup className="my-6 px-6">

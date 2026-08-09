@@ -21,7 +21,7 @@ export function SubjectListItem({
 }: SubjectListItemProps) {
 	return (
 		<Item
-			variant="muted"
+			className="bg-card"
 			aria-label={subject.name}
 		>
 			<ItemHeader className="text-xs font-extrabold uppercase">

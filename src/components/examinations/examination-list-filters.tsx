@@ -50,7 +50,7 @@ export function ExaminationListFilters() {
 			]).withDefault("all")
 		},
 		{
-			limitUrlUpdates: throttle(100),
+			limitUrlUpdates: throttle(500),
 			shallow: false
 		}
 	);

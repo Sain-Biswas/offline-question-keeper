@@ -17,7 +17,7 @@ interface PaperListItemProps {
 export function PaperListItem({ paper, examinationSlug }: PaperListItemProps) {
 	return (
 		<Item
-			variant="muted"
+			className="bg-card"
 			aria-label={paper.name}
 		>
 			<ItemContent className="gap-0">
