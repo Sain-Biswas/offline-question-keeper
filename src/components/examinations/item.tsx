@@ -1,4 +1,4 @@
-import { ExaminationItemOptions } from "~/components/examinations/examination-item-options";
+import { ExaminationItemOptions } from "~/components/examinations/item-options";
 import { cn } from "~/lib/utils";
 import type { FetchExaminationListType } from "~/server/fetchers/fetch-examination-list";
 import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";

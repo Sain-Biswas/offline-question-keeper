@@ -5,8 +5,8 @@ import {
 	parseAsString,
 	parseAsStringLiteral
 } from "nuqs/server";
-import { ExaminationItem } from "~/components/examinations/examination-item";
-import { ExaminationListFilters } from "~/components/examinations/examination-list-filters";
+import { ExaminationItem } from "~/components/examinations/item";
+import { ExaminationListFilters } from "~/components/examinations/list-filters";
 import { NewExaminationDialog } from "~/components/forms/new-examination-dialog";
 import { fetchExaminationList } from "~/server/fetchers/fetch-examination-list";
 import {
