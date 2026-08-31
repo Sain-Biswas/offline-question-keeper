@@ -24,6 +24,11 @@ export const relations = defineRelations(schema, (relation) => ({
 			to: relation.chapterTable.id.through(
 				relation.examinationReferenceView.chapterId
 			)
+		}),
+
+		tags: relation.many.tagsTable({
+			from: relation.examinationTable.id,
+			to: relation.tagsTable.examinationId
 		})
 	},
 

@@ -1,4 +1,9 @@
-import { ComponentIcon, LogsIcon, NotepadTextIcon } from "lucide-react";
+import {
+	ComponentIcon,
+	LogsIcon,
+	NotepadTextIcon,
+	TagsIcon
+} from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSearchParamsCache, parseAsString } from "nuqs/server";
@@ -7,14 +12,17 @@ import { ChapterListFilters } from "~/components/chapters/list-filters";
 import { NewChapterDialog } from "~/components/forms/new-chapter-dialog";
 import { NewPaperDialog } from "~/components/forms/new-paper-dialog";
 import { NewSubjectDialog } from "~/components/forms/new-subject-dialog";
+import { NewTagDialog } from "~/components/forms/new-tag-dialog";
 import { PaperListItem } from "~/components/papers/item";
 import { PaperListFilters } from "~/components/papers/list-filters";
 import { SubjectListItem } from "~/components/subjects/item";
 import { SubjectListFilters } from "~/components/subjects/list-filters";
+import { TagListItem } from "~/components/tags/item";
 import { fetchChapterList } from "~/server/fetchers/fetch-chapter-list";
 import { fetchExaminationDetails } from "~/server/fetchers/fetch-examination-details";
 import { fetchPaperList } from "~/server/fetchers/fetch-paper-list";
 import { fetchSubjectList } from "~/server/fetchers/fetch-subject-list";
+import { fetchTagList } from "~/server/fetchers/fetch-tag-list";
 import { Avatar, AvatarFallback, AvatarImage } from "~/shadcn/ui/avatar";
 import { Badge } from "~/shadcn/ui/badge";
 import {
@@ -43,7 +51,9 @@ const searchParamCache = createSearchParamsCache({
 	byPaper: parseAsString.withDefault(""),
 
 	chapterQ: parseAsString.withDefault(""),
-	bySubject: parseAsString.withDefault("")
+	bySubject: parseAsString.withDefault(""),
+
+	tagQ: parseAsString.withDefault("")
 });
 
 export default async function ExaminationPage({
@@ -55,10 +65,10 @@ export default async function ExaminationPage({
 	const examination = await fetchExaminationDetails({ slug });
 	if (!examination) notFound();
 
-	const { paperQ, subjectQ, byPaper, chapterQ, bySubject } =
+	const { paperQ, subjectQ, byPaper, chapterQ, bySubject, tagQ } =
 		await searchParamCache.parse(searchParams);
 
-	const [papers, subjects, chapters] = await Promise.all([
+	const [papers, subjects, chapters, tags] = await Promise.all([
 		fetchPaperList({
 			examination: examination.id,
 			q: paperQ
@@ -72,7 +82,8 @@ export default async function ExaminationPage({
 			examination: examination.id,
 			q: chapterQ,
 			subject: bySubject
-		})
+		}),
+		fetchTagList({ examination: examination.id, q: tagQ })
 	]);
 
 	return (
@@ -174,6 +185,17 @@ export default async function ExaminationPage({
 							Chapters{" "}
 							<Badge className="text-xs font-extrabold text-chart-1">
 								{examination.chapterCount}
+							</Badge>
+						</TabsTrigger>
+
+						<TabsTrigger
+							value="tags"
+							className="items-center gap-3"
+						>
+							<TagsIcon />
+							Tags{" "}
+							<Badge className="text-xs font-extrabold text-chart-1">
+								{examination.tagCount}
 							</Badge>
 						</TabsTrigger>
 					</TabsList>
@@ -284,6 +306,42 @@ export default async function ExaminationPage({
 								<ChapterListItem
 									chapter={chapter}
 									key={chapter.id}
+								/>
+							))}
+						</ItemGroup>
+					</TabsContent>
+
+					<TabsContent
+						value="tags"
+						className="m-6 sm:mx-0"
+					>
+						<section className="flex flex-col items-end gap-6 bg-card p-6 md:flex-row">
+							{/* <PaperListFilters /> */}
+							<NewTagDialog examinationId={examination.id} />
+						</section>
+
+						{tags.length === 0 && (
+							<Empty>
+								<EmptyHeader>
+									<EmptyMedia variant="icon">
+										<TagsIcon />
+									</EmptyMedia>
+
+									<EmptyTitle>No Tags to show</EmptyTitle>
+
+									<EmptyDescription>
+										Add new tags or try changing the filters
+										applied.
+									</EmptyDescription>
+								</EmptyHeader>
+							</Empty>
+						)}
+
+						<ItemGroup className="my-6">
+							{tags.map((tag) => (
+								<TagListItem
+									tag={tag}
+									key={tag.id}
 								/>
 							))}
 						</ItemGroup>

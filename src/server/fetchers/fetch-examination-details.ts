@@ -1,7 +1,7 @@
 "use server";
 
 import { database } from "~/server/database";
-import { examinationReferenceView } from "../database/schema";
+import { examinationReferenceView, tagsTable } from "../database/schema";
 
 interface FetchExaminationDetailsProps {
 	slug: string;
@@ -33,7 +33,13 @@ export async function fetchExaminationDetails({
 				SELECT COUNT(DISTINCT ${examinationReferenceView.chapterId}) 
 				FROM ${examinationReferenceView} 
 				WHERE ${examinationReferenceView.examinationId} = ${t.id}
-			  )`.as("chapter_count")
+			  )`.as("chapter_count"),
+
+			tagCount: (t, { sql }) => sql<number>`(
+			 	SELECT COUNT(DISTINCT ${tagsTable.id})
+				FROM ${tagsTable}
+				WHERE ${tagsTable.examinationId} = ${t.id} 
+			  )`
 		}
 	});
 }
