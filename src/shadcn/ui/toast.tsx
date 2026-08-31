@@ -1,18 +1,18 @@
 "use client";
 
-import { Toast as ToastPrimitive } from "@base-ui/react/toast";
 import * as React from "react";
+import { Toast as ToastPrimitive } from "@base-ui/react/toast";
 
-import {
-	CircleCheckIcon,
-	InfoIcon,
-	LoaderIcon,
-	OctagonXIcon,
-	TriangleAlertIcon,
-	XIcon
-} from "lucide-react";
 import { cn } from "~/lib/utils";
 import { Button } from "~/shadcn/ui/button";
+import {
+	XIcon,
+	CircleCheckIcon,
+	InfoIcon,
+	TriangleAlertIcon,
+	OctagonXIcon,
+	Loader2Icon
+} from "lucide-react";
 
 const toast = ToastPrimitive.createToastManager();
 
@@ -34,7 +34,7 @@ function ToastViewport({ className, ...props }: ToastPrimitive.Viewport.Props) {
 		<ToastPrimitive.Viewport
 			data-slot="toast-viewport"
 			className={cn(
-				"pointer-events-none fixed inset-x-4 bottom-4 z-100 mx-auto w-auto max-w-sm outline-none sm:right-4 sm:left-auto sm:mx-0 sm:w-full",
+				"pointer-events-none fixed inset-x-4 bottom-4 z-50 mx-auto w-auto max-w-sm outline-none sm:right-4 sm:left-auto sm:mx-0 sm:w-full",
 				className
 			)}
 			{...props}
@@ -178,7 +178,7 @@ function ToastIcon({ type }: { type: string | undefined }) {
 
 	if (type === "loading") {
 		icon = (
-			<LoaderIcon
+			<Loader2Icon
 				className="animate-spin"
 				aria-hidden="true"
 			/>
@@ -244,17 +244,17 @@ const createToastManager = ToastPrimitive.createToastManager;
 const useToastManager = ToastPrimitive.useToastManager;
 
 export {
-	createToastManager,
+	Toaster,
 	Toast,
-	toast,
 	ToastAction,
 	ToastClose,
 	ToastContent,
 	ToastDescription,
-	Toaster,
 	ToastPortal,
 	ToastProvider,
 	ToastTitle,
 	ToastViewport,
+	createToastManager,
+	toast,
 	useToastManager
 };
