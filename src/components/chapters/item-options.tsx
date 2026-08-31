@@ -14,12 +14,13 @@ import {
 } from "lucide-react";
 import Form from "next/form";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import { useActionState, useEffect, useEffectEvent, useState } from "react";
 import { z } from "zod";
 import { useAppForm } from "~/integrations/tanstack/forms/app-form";
 import { updateChapterSchema } from "~/options/forms/update-chapter-options";
 import { updateChapterDetails } from "~/server/actions/update-chapter";
-import type { GetChapterListType } from "~/server/fetchers/get-chapter-list";
+import type { FetchChapterListType } from "~/server/fetchers/fetch-chapter-list";
 import { Button } from "~/shadcn/ui/button";
 import {
 	Dialog,
@@ -43,15 +44,15 @@ import { FieldGroup } from "~/shadcn/ui/field";
 import { toast } from "~/shadcn/ui/toast";
 
 interface ChapterListItemOptionsProps {
-	chapter: GetChapterListType[number];
-	examinationSlug: string;
+	chapter: FetchChapterListType["chapters"][number];
 }
 
 export function ChapterListItemOptions({
-	examinationSlug,
 	chapter
 }: ChapterListItemOptionsProps) {
 	const [openDialog, setOpenDialog] = useState<boolean>(false);
+
+	const { slug } = useParams<{ slug: string }>();
 
 	const [state, action] = useActionState(
 		updateChapterDetails,
@@ -129,7 +130,7 @@ export function ChapterListItemOptions({
 						<DropdownMenuItem
 							render={
 								<Link
-									href={`/examination/${examinationSlug}/question?paper=${chapter.paperSlug}&subject=${chapter.subjectSlug}&chapter=${chapter.slug}`}
+									href={`/examination/${slug}/question?paper=${chapter.paperSlug}&subject=${chapter.subjectSlug}&chapter=${chapter.slug}`}
 								>
 									Questions
 									<DropdownMenuShortcut>

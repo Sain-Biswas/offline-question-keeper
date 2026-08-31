@@ -2,13 +2,16 @@ import { ComponentIcon, LogsIcon, NotepadTextIcon } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createSearchParamsCache, parseAsString } from "nuqs/server";
-import { ChapterList } from "~/components/chapters/list";
+import { ChapterListItem } from "~/components/chapters/item";
+import { ChapterListFilters } from "~/components/chapters/list-filters";
+import { NewChapterDialog } from "~/components/forms/new-chapter-dialog";
 import { NewPaperDialog } from "~/components/forms/new-paper-dialog";
 import { NewSubjectDialog } from "~/components/forms/new-subject-dialog";
 import { PaperListItem } from "~/components/papers/item";
 import { PaperListFilters } from "~/components/papers/list-filters";
 import { SubjectListItem } from "~/components/subjects/item";
 import { SubjectListFilters } from "~/components/subjects/list-filters";
+import { fetchChapterList } from "~/server/fetchers/fetch-chapter-list";
 import { fetchExaminationDetails } from "~/server/fetchers/fetch-examination-details";
 import { fetchPaperList } from "~/server/fetchers/fetch-paper-list";
 import { fetchSubjectList } from "~/server/fetchers/fetch-subject-list";
@@ -39,7 +42,8 @@ const searchParamCache = createSearchParamsCache({
 	subjectQ: parseAsString.withDefault(""),
 	byPaper: parseAsString.withDefault(""),
 
-	chapterQ: parseAsString.withDefault("")
+	chapterQ: parseAsString.withDefault(""),
+	bySubject: parseAsString.withDefault("")
 });
 
 export default async function ExaminationPage({
@@ -51,16 +55,10 @@ export default async function ExaminationPage({
 	const examination = await fetchExaminationDetails({ slug });
 	if (!examination) notFound();
 
-	const { paperQ, subjectQ, byPaper } =
+	const { paperQ, subjectQ, byPaper, chapterQ, bySubject } =
 		await searchParamCache.parse(searchParams);
 
-	const param = await searchParams;
-
-	const chapterSearch = (param["chapterSearch"] as string | undefined) || "";
-	const searchSubject =
-		(param["searchSubject"] as string | undefined) || "all";
-
-	const [papers, subjects] = await Promise.all([
+	const [papers, subjects, chapters] = await Promise.all([
 		fetchPaperList({
 			examination: examination.id,
 			q: paperQ
@@ -69,6 +67,11 @@ export default async function ExaminationPage({
 			examination: examination.id,
 			paper: byPaper,
 			q: subjectQ
+		}),
+		fetchChapterList({
+			examination: examination.id,
+			q: chapterQ,
+			subject: bySubject
 		})
 	]);
 
@@ -253,12 +256,37 @@ export default async function ExaminationPage({
 						value="chapters"
 						className="m-6 sm:mx-0"
 					>
-						<ChapterList
-							examinationId={examination.id}
-							examinationSlug={examination.slug}
-							search={chapterSearch}
-							selectedSubject={searchSubject}
-						/>
+						<section className="flex flex-col flex-wrap items-end gap-6 bg-card p-6 md:flex-row">
+							<ChapterListFilters subjects={chapters.subjects} />
+
+							<NewChapterDialog subjects={chapters.subjects} />
+						</section>
+
+						{chapters.chapters.length === 0 && (
+							<Empty>
+								<EmptyHeader>
+									<EmptyMedia variant="icon">
+										<LogsIcon />
+									</EmptyMedia>
+
+									<EmptyTitle>No Chapters to show</EmptyTitle>
+
+									<EmptyDescription>
+										Add new chapters or try changing the
+										filters applied.
+									</EmptyDescription>
+								</EmptyHeader>
+							</Empty>
+						)}
+
+						<ItemGroup className="my-6">
+							{chapters.chapters.map((chapter) => (
+								<ChapterListItem
+									chapter={chapter}
+									key={chapter.id}
+								/>
+							))}
+						</ItemGroup>
 					</TabsContent>
 				</Tabs>
 			</main>

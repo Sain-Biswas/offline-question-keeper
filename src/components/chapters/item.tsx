@@ -1,5 +1,5 @@
 import { DotIcon } from "lucide-react";
-import type { GetChapterListType } from "~/server/fetchers/get-chapter-list";
+import type { FetchChapterListType } from "~/server/fetchers/fetch-chapter-list";
 import {
 	Item,
 	ItemActions,
@@ -12,14 +12,10 @@ import {
 import { ChapterListItemOptions } from "./item-options";
 
 interface ChapterListItemProps {
-	chapter: GetChapterListType[number];
-	examinationSlug: string;
+	chapter: FetchChapterListType["chapters"][number];
 }
 
-export function ChapterListItem({
-	chapter,
-	examinationSlug
-}: ChapterListItemProps) {
+export function ChapterListItem({ chapter }: ChapterListItemProps) {
 	return (
 		<Item
 			className="bg-card"
@@ -44,10 +40,7 @@ export function ChapterListItem({
 			</ItemContent>
 
 			<ItemActions>
-				<ChapterListItemOptions
-					chapter={chapter}
-					examinationSlug={examinationSlug}
-				/>
+				<ChapterListItemOptions chapter={chapter} />
 			</ItemActions>
 
 			<ItemFooter className="justify-start text-xs/relaxed font-extrabold uppercase">

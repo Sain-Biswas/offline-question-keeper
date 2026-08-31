@@ -79,7 +79,7 @@ export const relations = defineRelations(schema, (relation) => ({
 			)
 		}),
 
-		papers: relation.many.paperTable({
+		paper: relation.one.paperTable({
 			from: relation.chapterTable.id.through(
 				relation.examinationReferenceView.chapterId
 			),

@@ -33,10 +33,10 @@ import { FieldDescription, FieldGroup } from "~/shadcn/ui/field";
 import { toast } from "~/shadcn/ui/toast";
 
 import { useAppForm } from "~/integrations/tanstack/forms/app-form";
-import type { GetSubjectEntriesType } from "~/server/fetchers/get-subject-entries";
+import type { FetchChapterListType } from "~/server/fetchers/fetch-chapter-list";
 
 interface NewSubjectDialogProps {
-	subjects: GetSubjectEntriesType;
+	subjects: FetchChapterListType["subjects"];
 }
 
 export function NewChapterDialog({ subjects }: NewSubjectDialogProps) {
@@ -102,7 +102,10 @@ export function NewChapterDialog({ subjects }: NewSubjectDialogProps) {
 		>
 			<DialogTrigger
 				render={
-					<Button className="w-full md:w-fit">
+					<Button
+						className="w-full md:w-fit"
+						size="lg"
+					>
 						<CirclePlusIcon />
 						Add New Chapter
 					</Button>
